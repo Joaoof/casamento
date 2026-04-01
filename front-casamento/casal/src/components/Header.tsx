@@ -26,6 +26,7 @@ export default function Header({
   const [isAccessModalOpen, setIsAccessModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [confirmState, setConfirmState] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   // ✅ Dispara o overlay — chamado pelo botão da navbar E pelo botão dentro do modal de acesso
   function handleConfirmarPresenca() {
@@ -314,7 +315,7 @@ export default function Header({
       {/* CONTAINER HERO */}
       <div className="w-full flex flex-col min-h-screen relative">
         <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url("/img1.JPG")' }} />
+          style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url("/img1.jpeg")' }} />
 
         {/* NAVBAR */}
         <header className="relative md:sticky md:top-0 z-50 w-full bg-transparent">
@@ -330,12 +331,20 @@ export default function Header({
             <div className="flex items-center gap-3">
               {/* ✅ Botão limpo — só ícone + texto + fundo azul */}
               <button
-                onClick={handleConfirmarPresenca}
-                className="hidden lg:flex items-center gap-2 bg-[#1B3A6B] hover:bg-[#14305a] text-white px-5 py-2 rounded-full transition border border-white/20 shadow-md"
+                onClick={() => setIsLoginModalOpen(true)}
+                className="hidden lg:flex items-center gap-2 px-6 py-2.5 rounded-full transition shadow-sm backdrop-blur-md"
+                style={{
+                  background: "rgba(162, 207, 254, 0.25)", // azul serenity translúcido
+                  border: "1px solid rgba(162, 207, 254, 0.4)",
+                  color: "#1B2A41"
+                }}
               >
-                <CheckCircle className="w-4 h-4 shrink-0" />
-                <span style={{ fontFamily: "serif" }} className="text-lg tracking-wider leading-none">
-                  Confirmar Presença
+                <CheckCircle className="w-4 h-4 shrink-0 opacity-80" />
+                <span
+                  style={{ fontFamily: "serif" }}
+                  className="text-lg tracking-wide leading-none"
+                >
+                  Área do Casal
                 </span>
               </button>
 
@@ -390,18 +399,23 @@ export default function Header({
       </div>
 
       {/* COUNTDOWN */}
-      <section className="py-20 md:py-24 bg-[#f0f6ff] border-t border-blue-100">
+      <section className="py-20 md:py-24 bg-[#F5F5DC] border-t border-[#D8B56A]">
         <div className="mx-auto max-w-[900px] text-center px-6 relative">
-          <h2 className="text-3xl md:text-4xl font-serif mb-4 text-[#1B3A6B]">O grande dia está chegando</h2>
-          <p className="text-[#4A7AB5] mb-12 md:mb-16 text-xs md:text-sm font-medium uppercase tracking-[0.1em] md:tracking-[0.2em]">
+
+          <h2 className="text-3xl md:text-4xl font-serif mb-4 text-[#8B4513]">
+            O grande dia está chegando
+          </h2>
+
+          <p className="text-[#8B4513]/70 mb-12 md:mb-16 text-xs md:text-sm font-medium uppercase tracking-[0.1em] md:tracking-[0.2em]">
             Cada segundo nos aproxima desse momento especial
           </p>
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center relative z-10 max-w-sm lg:max-w-none mx-auto">
             {[
-              { label: "Dias", value: timeLeft.dias, percentage: diasPct, color: "#1B3A6B" },
-              { label: "Horas", value: timeLeft.horas, percentage: horasPct, color: "#4A7AB5" },
-              { label: "Minutos", value: timeLeft.minutos, percentage: minutosPct, color: "#7AAFD4" },
-              { label: "Segundos", value: timeLeft.segundos, percentage: segundosPct, color: "#C8DCF0" },
+              { label: "Dias", value: timeLeft.dias, percentage: diasPct, color: "#8B4513" },
+              { label: "Horas", value: timeLeft.horas, percentage: horasPct, color: "#A0522D" },
+              { label: "Minutos", value: timeLeft.minutos, percentage: minutosPct, color: "#D8B56A" },
+              { label: "Segundos", value: timeLeft.segundos, percentage: segundosPct, color: "#000000" },
             ].map((item) => (
               <CircleProgress key={item.label} {...item} />
             ))}

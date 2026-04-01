@@ -472,18 +472,36 @@ export default function OurStory() {
       `}</style>
 
       {/* BANNER */}
-      <div className="sticky top-0 z-50 w-full overflow-hidden py-2 shadow-md md:py-2.5"
-        style={{ background: 'linear-gradient(90deg, #1B3A6B, #4A7AB5, #1B3A6B)' }}>
-        <div className="animate-marquee flex items-center whitespace-nowrap text-white">
+      <div
+        className="sticky top-0 z-50 w-full overflow-hidden py-2 shadow-md md:py-2.5"
+        style={{
+          background: "linear-gradient(90deg, #8B4513, #D8B56A, #8B4513)"
+        }}
+      >
+        <div className="animate-marquee flex items-center whitespace-nowrap text-[#F5F5DC]">
           {[...Array(10)].map((_, i) => (
-            <span key={i} className="mx-6 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.25em] md:mx-10 md:gap-4 md:text-[11px] md:tracking-[0.3em]">
-              <span className="text-blue-200/60">✦</span>
+            <span
+              key={i}
+              className="mx-6 flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.25em] md:mx-10 md:gap-4 md:text-[11px] md:tracking-[0.3em]"
+            >
+              <span className="text-[#F5F5DC]/50">✦</span>
+
               celebrando o amor de
-              <span className="rounded-full border border-white/30 bg-white/10 px-3 py-0.5 font-bold tracking-widest md:px-4">
-                Luís &amp; Natiele
+
+              <span
+                className="rounded-full px-3 py-0.5 font-bold tracking-widest md:px-4"
+                style={{
+                  border: "1px solid rgba(245,245,220,0.4)",
+                  background: "rgba(245,245,220,0.15)",
+                  color: "#F5F5DC"
+                }}
+              >
+                Luís & Vitória
               </span>
+
               25 · 07 · 2026
-              <span className="text-blue-200/60">✦</span>
+
+              <span className="text-[#F5F5DC]/50">✦</span>
             </span>
           ))}
         </div>
@@ -492,214 +510,233 @@ export default function OurStory() {
       {/* HERO */}
       <StickyReveal index={0}>
         <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 scale-105 bg-cover bg-center" style={{ backgroundImage: 'url("img2.JPG")' }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1B3A6B]/10 via-[#1B3A6B]/40 to-[#1B3A6B]/75" />
+
+          {/* IMAGEM COM MELHOR QUALIDADE */}
+          <div
+            className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'url("img3.jpeg")',
+              filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
+            }}
+          />
+
+          {/* OVERLAY CORRETO (quente + leve) */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(to bottom, rgba(245,245,220,0.2), rgba(139,69,19,0.55))"
+            }}
+          />
+
           <div className="relative z-10 flex flex-col items-center px-6 text-center">
-            <div className="mb-5 flex items-center gap-3 opacity-70">
-              <div className="h-[1px] w-8 bg-blue-200 md:w-12" />
-              <Heart className="h-3.5 w-3.5 fill-blue-200 text-blue-200 md:h-4 md:w-4" />
-              <div className="h-[1px] w-8 bg-blue-200 md:w-12" />
+
+            {/* LINHA + ÍCONE */}
+            <div className="mb-5 flex items-center gap-3 opacity-80">
+              <div className="h-[1px] w-8 md:w-12" style={{ background: "#F5F5DC" }} />
+              <Heart className="h-3.5 w-3.5 md:h-4 md:w-4"
+                style={{ fill: "#D8B56A", color: "#D8B56A" }}
+              />
+              <div className="h-[1px] w-8 md:w-12" style={{ background: "#F5F5DC" }} />
             </div>
-            <p className="mb-3 text-[9px] font-medium uppercase tracking-[0.4em] text-blue-200 md:text-[10px]">
+
+            {/* SUBTÍTULO */}
+            <p
+              className="mb-3 text-[9px] font-medium uppercase tracking-[0.4em] md:text-[10px]"
+              style={{ color: "#F5F5DC" }}
+            >
               A nossa história
             </p>
-            <h1 className="mb-4 font-serif text-[2.8rem] font-bold leading-tight text-white drop-shadow-2xl sm:text-4xl md:text-5xl">
-              Luís &amp; Natiele
+
+            {/* NOME */}
+            <h1
+              className="mb-4 font-serif text-[2.8rem] font-bold leading-tight sm:text-4xl md:text-5xl"
+              style={{
+                color: "#FFFFFF",
+                textShadow: "0 6px 25px rgba(0,0,0,0.4)"
+              }}
+            >
+              Luís & Vitória
             </h1>
+
+            {/* DATA + LOCAL */}
             <div className="mt-3 flex flex-col items-center gap-2 sm:flex-row sm:gap-6">
-              <span className="flex items-center gap-1.5 text-xs font-light tracking-widest text-white/80 md:text-sm">
-                <Calendar className="h-3 w-3 text-blue-200 md:h-3.5 md:w-3.5" />
+
+              <span
+                className="flex items-center gap-1.5 text-xs font-light tracking-widest md:text-sm"
+                style={{ color: "rgba(245,245,220,0.9)" }}
+              >
+                <Calendar className="h-3 w-3 md:h-3.5 md:w-3.5"
+                  style={{ color: "#D8B56A" }}
+                />
                 25 de Julho, 2026
               </span>
-              <span className="hidden text-white/30 sm:block">·</span>
-              <span className="flex items-center gap-1.5 text-xs font-light tracking-widest text-white/80 md:text-sm">
-                <MapPin className="h-3 w-3 text-blue-200 md:h-3.5 md:w-3.5" />
+
+              <span className="hidden sm:block" style={{ color: "rgba(245,245,220,0.4)" }}>·</span>
+
+              <span
+                className="flex items-center gap-1.5 text-xs font-light tracking-widest md:text-sm"
+                style={{ color: "rgba(245,245,220,0.9)" }}
+              >
+                <MapPin className="h-3 w-3 md:h-3.5 md:w-3.5"
+                  style={{ color: "#D8B56A" }}
+                />
                 Araguaína, TO
               </span>
+
             </div>
           </div>
+
+          {/* SCROLL INDICATOR */}
           <div className="animate-float absolute bottom-8 flex flex-col items-center gap-2">
-            <span className="text-[8px] uppercase tracking-[0.4em] text-white/50 md:text-[9px]">Deslize</span>
-            <div className="flex h-8 w-4 items-start justify-center rounded-full border border-white/30 p-1 md:h-9 md:w-5">
-              <div className="h-1.5 w-1 animate-bounce rounded-full bg-white/60" />
+            <span
+              className="text-[8px] uppercase tracking-[0.4em] md:text-[9px]"
+              style={{ color: "rgba(245,245,220,0.6)" }}
+            >
+              Deslize
+            </span>
+
+            <div
+              className="flex h-8 w-4 items-start justify-center rounded-full p-1 md:h-9 md:w-5"
+              style={{ border: "1px solid rgba(245,245,220,0.4)" }}
+            >
+              <div className="h-1.5 w-1 animate-bounce rounded-full"
+                style={{ background: "#F5F5DC" }}
+              />
             </div>
           </div>
+
         </div>
       </StickyReveal>
 
       {/* CITAÇÃO */}
       <StickyReveal index={1}>
-        <section className="flex min-h-screen w-full items-center justify-center bg-[#f0f6ff] px-6 py-20 dark:bg-slate-900">
+        <section
+          className="flex min-h-screen w-full items-center justify-center px-6 py-20"
+          style={{
+            background: "linear-gradient(to bottom, #F5F5DC, #efe3c2)"
+          }}
+        >
           <div className="flex max-w-xl flex-col items-center text-center">
-            <span className="mb-2 select-none font-serif text-6xl leading-none text-[#C8DCF0] dark:text-[#1B3A6B]/60 md:text-7xl">"</span>
-            <p className="font-serif text-lg leading-[1.9] text-slate-600 dark:text-slate-400 md:text-2xl">
+
+            {/* ASPAS DECORATIVA */}
+            <span
+              className="mb-2 select-none font-serif text-6xl leading-none md:text-7xl"
+              style={{ color: "rgba(139,69,19,0.2)" }}
+            >
+              "
+            </span>
+
+            {/* TEXTO */}
+            <p
+              className="font-serif text-lg leading-[1.9] md:text-2xl"
+              style={{ color: "#5a3b1a" }}
+            >
               Foi nos detalhes mais simples que construímos o nosso maior amor.
               Cada pequena escolha nos guiou até o altar.
             </p>
+
+            {/* LINHA + ÍCONE */}
             <div className="mt-8 flex items-center gap-4">
-              <div className="h-[1px] w-8 bg-[#C8DCF0] md:w-10" />
-              <Heart className="h-3.5 w-3.5 fill-[#4A7AB5] text-[#4A7AB5]" />
-              <div className="h-[1px] w-8 bg-[#C8DCF0] md:w-10" />
+              <div className="h-[1px] w-8 md:w-10" style={{ background: "#D8B56A" }} />
+
+              <Heart
+                className="h-3.5 w-3.5"
+                style={{ fill: "#D8B56A", color: "#D8B56A" }}
+              />
+
+              <div className="h-[1px] w-8 md:w-10" style={{ background: "#D8B56A" }} />
             </div>
-            <p className="mt-3 text-[10px] font-medium uppercase tracking-[0.3em] text-[#4A7AB5]">
-              Luís e Natiele
+
+            {/* NOME DO CASAL */}
+            <p
+              className="mt-3 text-[10px] font-medium uppercase tracking-[0.3em]"
+              style={{ color: "#8B4513" }}
+            >
+              Luís e Vitória
             </p>
-          </div>
-        </section>
-      </StickyReveal>
 
-      {/* TIMELINE */}
-      <StickyReveal index={2}>
-        <section
-          className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden py-20 dark:bg-slate-800/90"
-          style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f0f6ff 60%, #ffffff 100%)' }}
-        >
-          <div className="pointer-events-none absolute top-0 left-0 select-none opacity-20" aria-hidden>
-            <svg width="180" height="180" viewBox="0 0 200 200" fill="none">
-              <ellipse cx="30" cy="60" rx="12" ry="34" transform="rotate(-40 30 60)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <ellipse cx="60" cy="30" rx="10" ry="30" transform="rotate(-20 60 30)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <ellipse cx="90" cy="15" rx="9" ry="26" transform="rotate(5 90 15)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <ellipse cx="120" cy="20" rx="8" ry="24" transform="rotate(25 120 20)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <ellipse cx="145" cy="40" rx="8" ry="22" transform="rotate(45 145 40)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <path d="M20 80 Q70 50 150 55" stroke="#4A7AB5" strokeWidth="1" fill="none" />
-            </svg>
-          </div>
-          <div className="pointer-events-none absolute bottom-0 right-0 select-none rotate-180 opacity-20" aria-hidden>
-            <svg width="180" height="180" viewBox="0 0 200 200" fill="none">
-              <ellipse cx="30" cy="60" rx="12" ry="34" transform="rotate(-40 30 60)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <ellipse cx="60" cy="30" rx="10" ry="30" transform="rotate(-20 60 30)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <ellipse cx="90" cy="15" rx="9" ry="26" transform="rotate(5 90 15)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <ellipse cx="120" cy="20" rx="8" ry="24" transform="rotate(25 120 20)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <ellipse cx="145" cy="40" rx="8" ry="22" transform="rotate(45 145 40)" stroke="#4A7AB5" strokeWidth="1.2" />
-              <path d="M20 80 Q70 50 150 55" stroke="#4A7AB5" strokeWidth="1" fill="none" />
-            </svg>
-          </div>
-
-          <div className="relative mx-auto w-full max-w-5xl px-5 md:px-10">
-            <div className="mb-14 flex flex-col items-center text-center">
-              <p className="mb-1 font-serif text-3xl md:text-4xl" style={{ color: '#4A7AB5' }}>Nossa Jornada</p>
-              <p className="mb-3 text-sm tracking-[0.25em]" style={{ color: '#7AAFD4' }}>25 · 07 · 2026</p>
-            </div>
-
-            {/* DESKTOP */}
-            <div className="hidden md:block">
-              <div className="relative grid" style={{ gridTemplateColumns: `repeat(${TIMELINE_EVENTS.length}, 1fr)` }}>
-                <div className="absolute top-[40px] left-0 right-0 h-[1.5px] z-0"
-                  style={{ background: 'linear-gradient(to right, transparent 2%, #4A7AB5 10%, #4A7AB5 90%, transparent 98%)' }} />
-                {TIMELINE_EVENTS.map((event, i) => (
-                  <div key={i} className="group relative flex flex-col items-center">
-                    <div className="relative z-10 mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-white transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                      style={{ border: '1.5px solid #4A7AB5', color: '#4A7AB5', boxShadow: '0 2px 8px rgba(74,122,181,0.18)' }}>
-                      {TIMELINE_ICONS[i]}
-                    </div>
-                    <div className="relative z-10 h-2.5 w-2.5 rounded-full"
-                      style={{ background: '#4A7AB5', boxShadow: '0 0 0 3px white, 0 0 0 4.5px #4A7AB5' }} />
-                    <div className="my-2 h-4 w-[1.5px]" style={{ background: '#C8DCF0' }} />
-                    <p className="mb-0.5 text-center text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: '#1B3A6B' }}>
-                      {event.title}
-                    </p>
-                    <p className="mb-2 text-center text-[9px]" style={{ color: '#7AAFD4' }}>{event.date}</p>
-                    <div className="relative h-0 w-[110px] overflow-visible">
-                      <div className="absolute left-1/2 top-0 -translate-x-1/2 overflow-hidden rounded-xl opacity-0 shadow-xl transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-1"
-                        style={{ width: '110px', zIndex: 50, border: '2px solid #C8DCF0', boxShadow: '0 8px 32px rgba(27,58,107,0.25)' }}>
-                        <img src={event.img} alt={event.title} className="h-[130px] w-full object-cover" />
-                        <div className="px-2 py-1.5" style={{ background: '#1B3A6B' }}>
-                          <p className="text-center text-[8px] leading-snug text-white/70">{event.text}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-40 rounded-xl px-8 py-4 text-center"
-                style={{ background: 'rgba(200,220,240,0.15)', border: '1px solid #e8f1fb' }}>
-                <p className="text-xs leading-relaxed" style={{ color: '#7AAFD4' }}>
-                  Estamos muito felizes em ter você aqui e mal podemos esperar para celebrar com você!
-                </p>
-              </div>
-            </div>
-
-            {/* MOBILE */}
-            <div className="md:hidden">
-              <StoriesEntry events={TIMELINE_EVENTS} icons={TIMELINE_ICONS} />
-            </div>
           </div>
         </section>
       </StickyReveal>
 
       {/* CONVITE */}
       <StickyReveal index={4}>
-        <section className="relative flex h-screen w-full overflow-hidden dark:bg-slate-900">
+        <section className="relative flex h-screen w-full overflow-hidden">
+
           <div className="flex w-full flex-col md:flex-row">
-            <div className="relative h-[40vh] w-full md:h-full md:w-1/2">
-              <img src="img9.JPG" alt="Luís e Natiele" className="h-full w-full object-cover object-top" />
-              <div className="absolute inset-0 hidden md:block"
-                style={{ background: 'linear-gradient(to right, transparent 55%, #1B3060 100%)' }} />
-              <div className="absolute inset-0 md:hidden"
-                style={{ background: 'linear-gradient(to bottom, transparent 55%, #1B3060 100%)' }} />
+
+            {/* IMAGEM */}
+            <div className="relative h-[40vh] w-full md:h-full md:w-1/2 bg-[#EAF4FF]">
+              <img
+                src="img2.jpeg"
+                alt="Luís e Vitória"
+                className="h-full w-full object-contain"
+                style={{ filter: "brightness(0.95) contrast(1.05)" }}
+              />
+              <div
+                className="absolute inset-0 hidden md:block"
+                style={{
+                  background: "linear-gradient(to right, transparent 60%, rgba(162,207,254,0.6))"
+                }}
+              />
             </div>
-            <div className="relative flex w-full flex-col items-start justify-center overflow-hidden px-8 py-10 md:w-1/2 md:px-12 md:py-12"
-              style={{ background: '#1B3060' }}>
-              <div className="pointer-events-none absolute top-0 right-0 select-none" aria-hidden>
-                <svg width="200" height="200" viewBox="0 0 280 280" fill="none">
-                  <path d="M270 5 Q240 50 210 80 Q180 110 150 150" stroke="rgba(200,220,240,0.35)" strokeWidth="1.5" fill="none" />
-                  <ellipse cx="252" cy="28" rx="9" ry="22" transform="rotate(-55 252 28)" fill="rgba(200,220,240,0.3)" />
-                  <ellipse cx="235" cy="52" rx="8" ry="19" transform="rotate(-35 235 52)" fill="rgba(200,220,240,0.28)" />
-                  <ellipse cx="218" cy="74" rx="8" ry="17" transform="rotate(-15 218 74)" fill="rgba(200,220,240,0.25)" />
-                  <ellipse cx="200" cy="98" rx="7" ry="16" transform="rotate(5 200 98)" fill="rgba(200,220,240,0.22)" />
-                  <ellipse cx="180" cy="122" rx="7" ry="15" transform="rotate(20 180 122)" fill="rgba(200,220,240,0.2)" />
-                  <circle cx="265" cy="18" r="4.5" fill="rgba(200,220,240,0.35)" />
-                  <circle cx="278" cy="28" r="3.5" fill="rgba(200,220,240,0.3)" />
-                  <circle cx="270" cy="36" r="3" fill="rgba(200,220,240,0.28)" />
-                </svg>
-              </div>
-              <div className="pointer-events-none absolute bottom-0 left-0 select-none" aria-hidden>
-                <svg width="160" height="160" viewBox="0 0 280 280" fill="none">
-                  <path d="M10 275 Q40 230 70 200 Q100 170 130 130" stroke="rgba(200,220,240,0.3)" strokeWidth="1.5" fill="none" />
-                  <ellipse cx="28" cy="252" rx="9" ry="22" transform="rotate(55 28 252)" fill="rgba(200,220,240,0.28)" />
-                  <ellipse cx="48" cy="228" rx="8" ry="19" transform="rotate(35 48 228)" fill="rgba(200,220,240,0.25)" />
-                  <circle cx="15" cy="262" r="4" fill="rgba(200,220,240,0.3)" />
-                  <circle cx="5" cy="252" r="3" fill="rgba(200,220,240,0.25)" />
-                </svg>
-              </div>
-              <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.35em]"
-                style={{ color: 'rgba(200,220,240,0.45)' }}>
-                25 · 07 · 2026 &nbsp;·&nbsp; Araguaína, TO
+
+            {/* TEXTO */}
+            <div
+              className="flex w-full flex-col justify-center px-8 py-10 md:w-1/2 md:px-12"
+              style={{ background: "linear-gradient(to bottom, #EAF4FF, #FFFFFF)" }}
+            >
+              <p
+                className="mb-4 text-[10px] font-semibold uppercase tracking-[0.35em]"
+                style={{ color: "#4A7AB5" }}
+              >
+                25 · 07 · 2026 · Araguaína, TO
               </p>
-              <h2 className="mb-4 font-serif text-2xl font-bold text-white md:text-4xl lg:text-5xl">
-                Falta só <span style={{ color: '#F4A7B9' }}>o seu nome.</span>
+
+              <h2
+                className="mb-4 font-serif text-2xl font-bold md:text-4xl lg:text-5xl"
+                style={{ color: "#1B2A41" }}
+              >
+                Só falta{" "}
+                <span style={{ color: "#4A7AB5" }}>o seu sim.</span>
               </h2>
-              <p className="mb-6 max-w-xs text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                A lista está quase completa. Confirme e a gente cuida do resto.
+
+              <p
+                className="mb-6 max-w-xs text-sm leading-relaxed"
+                style={{ color: "rgba(27,42,65,0.7)" }}
+              >
+                Cada detalhe foi pensado com cuidado. Cada lugar,
+                escolhido com amor. O que ainda falta é você — e sua
+                presença vai completar este dia de um jeito que nenhum
+                enfeite poderia.
               </p>
-              <div className="group relative mb-6 w-full max-w-[220px] cursor-pointer overflow-hidden rounded-xl"
-                style={{ boxShadow: '0 8px 40px rgba(0,0,0,0.5)' }}
-                onClick={() => navigate("/rsvp")}>
-                <img src="/WhatsApp Image 2026-03-09 at 21.27.34.jpeg" alt="Convite"
-                  className="h-auto w-full object-contain transition-transform duration-500 group-hover:scale-110" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                  style={{ background: 'rgba(27,48,96,0.82)' }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round">
-                    <circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" /><path d="M11 8v6M8 11h6" />
-                  </svg>
-                  <span className="rounded-full px-5 py-2 text-xs font-bold uppercase tracking-[0.2em]"
-                    style={{ background: '#F4A7B9', color: '#1B3060' }}>
-                    Confirmar presença
-                  </span>
-                </div>
-                <div className="absolute inset-0 rounded-xl" style={{ border: '1px solid rgba(200,220,240,0.15)' }} />
-              </div>
-              <p className="text-[11px]" style={{ color: 'rgba(200,220,240,0.3)' }}>
-                Até <span style={{ color: 'rgba(200,220,240,0.55)' }}>15 de junho de 2026</span>
+
+              <p
+                className="mb-2 text-[11px] font-medium uppercase tracking-widest"
+                style={{ color: "rgba(27,42,65,0.45)" }}
+              >
+                Confirme sua presença até
               </p>
-              <p className="mt-6 font-serif text-sm italic" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                Luís &amp; Natiele
+
+              <p
+                className="text-sm font-semibold"
+                style={{ color: "#4A7AB5" }}
+              >
+                15 de junho de 2026
+              </p>
+
+              <p
+                className="mt-8 font-serif text-base italic"
+                style={{ color: "#4A7AB5" }}
+              >
+                Com amor, Luís &amp; Vitória
               </p>
             </div>
+
           </div>
         </section>
       </StickyReveal>
 
-    </div>
+    </div >
   )
 }

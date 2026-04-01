@@ -10,13 +10,14 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
-  const [username, setUsername]   = useState('');
-  const [password, setPassword]   = useState('');
-  const [error, setError]         = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const { login } = useAuth();
 
