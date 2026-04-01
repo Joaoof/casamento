@@ -50,6 +50,7 @@ export default function PhotoCarousel() {
   return (
     <>
       <section
+        id="galeria"
         className="relative w-full overflow-hidden py-24 dark:bg-slate-900"
         style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f0f6ff 50%, #ffffff 100%)' }}
         onMouseEnter={() => setIsHovering(true)}

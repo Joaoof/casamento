@@ -1,20 +1,18 @@
-import React from 'react';
-import { Heart } from 'lucide-react';
+import React from 'react'
+import { Heart } from 'lucide-react'
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-custom-header py-6 mt-12">
+    <footer className="mt-16 border-t border-[#EAEAEA] bg-white py-10">
       <div className="container mx-auto px-4 text-center">
-        <div className="flex items-center justify-center mb-3">
-          <Heart size={18} className="text-rose-500 mr-2" />
-          <span className="text-gray-600">Obrigado por fazer parte do nosso dia especial</span>
+        <div className="mb-3 flex items-center justify-center gap-2">
+          <Heart size={16} className="text-[#D4AF37]" fill="currentColor" />
+          <span className="font-serif text-lg text-black">Luís & Vitória</span>
         </div>
-        <p className="text-gray-500 text-sm">
-          © {new Date().getFullYear()} | Lista de Presentes de Casamento
-        </p>
+        <p className="text-sm text-black/65">Obrigado por celebrar esse momento conosco.</p>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

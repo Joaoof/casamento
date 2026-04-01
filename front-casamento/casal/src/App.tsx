@@ -46,7 +46,7 @@ function HomePage() {
   }
 
   return (
-    <div className="bg-custom-header min-h-screen flex flex-col font-lato">
+    <div className="min-h-screen flex flex-col font-lato bg-white">
       <WelcomeBanner coupleNames={couple.names} coupleSlug={normalizedCoupleSlug} />
 
       <Header

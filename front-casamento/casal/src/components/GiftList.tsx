@@ -216,7 +216,7 @@ const GiftList: React.FC<GiftListProps> = ({
   };
 
   return (
-    <div className="animate-fade-in max-w-5xl mx-auto px-4">
+    <div id="presentes" className="animate-fade-in max-w-5xl mx-auto px-4">
 
       {/* ── Título e imagem ── */}
       <div className="text-center mb-1">
