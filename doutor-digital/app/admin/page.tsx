@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { notFound } from "next/navigation"
+import { CalendarDays } from "lucide-react"
 
 type Diagnostico = {
   id: string
@@ -23,6 +24,7 @@ type Diagnostico = {
   usa_crm_vendas: string | null
   maior_dificuldade: string | null
   objetivo_crescimento: string | null
+  data_reuniao: string | null
   status: "pendente" | "em_analise" | "concluido"
 }
 
@@ -42,6 +44,20 @@ function fmtDate(iso: string) {
     day: "2-digit", month: "2-digit", year: "numeric",
     hour: "2-digit", minute: "2-digit",
   })
+}
+
+function fmtReuniao(iso: string | null): string | null {
+  if (!iso) return null
+  try {
+    const date = new Date(iso)
+    const day = date.toLocaleDateString("pt-BR", {
+      weekday: "long", day: "2-digit", month: "long", year: "numeric",
+    })
+    const time = iso.split("T")[1] ?? ""
+    return `${day} às ${time}h`
+  } catch {
+    return iso
+  }
 }
 
 export default async function AdminPage({
@@ -64,15 +80,16 @@ export default async function AdminPage({
 
   const rows: Diagnostico[] = (data as Diagnostico[]) ?? []
 
-  const total     = rows.length
-  const pendentes = rows.filter((r) => r.status === "pendente").length
-  const analise   = rows.filter((r) => r.status === "em_analise").length
+  const total      = rows.length
+  const pendentes  = rows.filter((r) => r.status === "pendente").length
+  const analise    = rows.filter((r) => r.status === "em_analise").length
   const concluidos = rows.filter((r) => r.status === "concluido").length
+  const comReuniao = rows.filter((r) => r.data_reuniao).length
 
   return (
     <main className="min-h-screen bg-[#040d18] text-white p-6 font-sans">
-      {/* Header */}
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-wide uppercase">
             Painel Admin — Diagnósticos
@@ -81,12 +98,13 @@ export default async function AdminPage({
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
           {[
-            { label: "Total",        value: total,     color: "text-white" },
-            { label: "Pendentes",    value: pendentes, color: "text-yellow-400" },
-            { label: "Em Análise",   value: analise,   color: "text-blue-400" },
-            { label: "Concluídos",   value: concluidos, color: "text-green-400" },
+            { label: "Total",              value: total,       color: "text-white" },
+            { label: "Pendentes",          value: pendentes,   color: "text-yellow-400" },
+            { label: "Em Análise",         value: analise,     color: "text-blue-400" },
+            { label: "Concluídos",         value: concluidos,  color: "text-green-400" },
+            { label: "Reuniões Agendadas", value: comReuniao,  color: "text-[#ffb703]" },
           ].map((s) => (
             <div key={s.label} className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-5">
               <div className={`text-3xl font-bold ${s.color}`}>{s.value}</div>
@@ -109,11 +127,23 @@ export default async function AdminPage({
           <div className="flex flex-col gap-6">
             {rows.map((d) => {
               const st = STATUS_LABEL[d.status] ?? STATUS_LABEL.pendente
+              const reuniao = fmtReuniao(d.data_reuniao)
               return (
                 <div
                   key={d.id}
                   className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden"
                 >
+                  {/* Faixa de reunião agendada */}
+                  {reuniao && (
+                    <div className="flex items-center gap-2.5 bg-[#ffb703]/10 border-b border-[#ffb703]/20 px-6 py-3">
+                      <CalendarDays className="h-4 w-4 text-[#ffb703] shrink-0" />
+                      <span className="text-xs font-semibold text-[#ffb703] uppercase tracking-wider">
+                        Reunião agendada:
+                      </span>
+                      <span className="text-sm text-white/80 capitalize">{reuniao}</span>
+                    </div>
+                  )}
+
                   {/* Card header */}
                   <div className="flex flex-wrap items-start justify-between gap-4 px-6 py-5 border-b border-white/[0.07]">
                     <div>
@@ -127,15 +157,21 @@ export default async function AdminPage({
                         <span>{fmtDate(d.created_at)}</span>
                       </div>
                     </div>
-                    <span className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${st.color}`}>
-                      {st.label}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {!d.data_reuniao && (
+                        <span className="text-xs px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/30">
+                          Sem reunião
+                        </span>
+                      )}
+                      <span className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${st.color}`}>
+                        {st.label}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Sections grid */}
                   <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-px bg-white/[0.05]">
 
-                    {/* Raio-X */}
                     <Section title="Raio-X da Clínica">
                       <Field label="Unidade / Cidade"       value={d.unidade_cidade} />
                       <Field label="Tempo de Operação"      value={d.tempo_operacao} />
@@ -143,16 +179,14 @@ export default async function AdminPage({
                       <Field label="Nº de Fisioterapeutas"  value={fmt(d.num_fisioterapeutas)} />
                     </Section>
 
-                    {/* Financeiro */}
                     <Section title="Modelo Financeiro">
-                      <Field label="Valor da Consulta"          value={fmt(d.valor_consulta, "R$ ")} />
-                      <Field label="Valor Tratamento Longo"      value={fmt(d.valor_tratamento_longo, "R$ ")} />
-                      <Field label="Consultas Mensais"          value={fmt(d.consultas_mensais)} />
-                      <Field label="Tratamentos Fechados/Mês"   value={fmt(d.tratamentos_fechados_mes)} />
-                      <Field label="Leads Mensais"              value={fmt(d.leads_mensais)} />
+                      <Field label="Valor da Consulta"         value={fmt(d.valor_consulta, "R$ ")} />
+                      <Field label="Valor Tratamento Longo"     value={fmt(d.valor_tratamento_longo, "R$ ")} />
+                      <Field label="Consultas Mensais"         value={fmt(d.consultas_mensais)} />
+                      <Field label="Tratamentos Fechados/Mês"  value={fmt(d.tratamentos_fechados_mes)} />
+                      <Field label="Leads Mensais"             value={fmt(d.leads_mensais)} />
                     </Section>
 
-                    {/* Marketing */}
                     <Section title="Marketing & Posicionamento">
                       <Field
                         label="Canais Utilizados"
@@ -161,16 +195,14 @@ export default async function AdminPage({
                       <Field label="Google Ativo?" value={d.google_ativo} />
                     </Section>
 
-                    {/* Operação */}
                     <Section title="Operação Comercial">
                       <Field label="API Oficial WhatsApp?" value={d.usa_api_whatsapp} />
                       <Field label="Usa CRM de Vendas?"    value={d.usa_crm_vendas} />
                     </Section>
 
-                    {/* Gargalos */}
                     <Section title="Gargalos & Oportunidades" wide>
-                      <Field label="Maior Dificuldade"         value={d.maior_dificuldade} multiline />
-                      <Field label="Objetivo (12 meses)"       value={d.objetivo_crescimento} multiline />
+                      <Field label="Maior Dificuldade"   value={d.maior_dificuldade} multiline />
+                      <Field label="Objetivo (12 meses)" value={d.objetivo_crescimento} multiline />
                     </Section>
 
                   </div>

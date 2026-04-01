@@ -15,9 +15,13 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import {
   submitDiagnostico,
+  getHorariosOcupados,
   type DiagnosticoFormData,
 } from "@/app/actions/diagnostico"
-import { CheckCircle2, AlertCircle, ChevronRight, ChevronLeft } from "lucide-react"
+import { CheckCircle2, AlertCircle, ChevronRight, ChevronLeft, CalendarDays, Clock } from "lucide-react"
+import { DayPicker } from "react-day-picker"
+import "react-day-picker/style.css"
+import { initialFormData } from "./content-section"
 
 // ─── Opções ──────────────────────────────────────────────────────────────────
 
@@ -92,33 +96,6 @@ const cx = {
   label: "text-white/70 text-sm mb-1 block",
 }
 
-// ─── Estado inicial ───────────────────────────────────────────────────────────
-
-const initialFormData: DiagnosticoFormData = {
-  nome: "",
-  email: "",
-  telefone: "",
-  nome_clinica: "",
-  unidade_cidade: "",
-  especialidade: "",
-  tempo_operacao: "",
-  num_secretarias: "",
-  num_fisioterapeutas: "",
-  consultas_mensais: "",
-  tratamentos_fechados_mes: "",
-  valor_consulta: "",
-  valor_tratamento_longo: "",
-  faturamento_mensal: "",
-  leads_mensais: "",
-  canais_utilizados: [],
-  google_ativo: "",
-  usa_api_whatsapp: "",
-  usa_crm_vendas: "",
-  principal_desafio: "",
-  maior_dificuldade: "",
-  objetivo_crescimento: "",
-}
-
 function formatPhone(value: string): string {
   const n = value.replace(/\D/g, "")
   if (n.length <= 2) return n
@@ -133,7 +110,33 @@ const STEPS = [
   "Resultados",
   "Marketing",
   "Desafios",
+  "Reunião",
 ]
+
+const TIME_SLOTS = ["15:00", "16:00", "17:00"]
+
+function getTomorrow(): Date {
+  const d = new Date()
+  d.setDate(d.getDate() + 1)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+
+function formatDatePtBR(date: Date): string {
+  return date.toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  })
+}
+
+function toISODateTimeLocal(date: Date, time: string): string {
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, "0")
+  const dd = String(date.getDate()).padStart(2, "0")
+  return `${yyyy}-${mm}-${dd}T${time}`
+}
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 
@@ -147,6 +150,10 @@ export function DiagnosticoForm() {
   } | null>(null)
   const [stepError, setStepError] = useState<string | null>(null)
   const [formData, setFormData] = useState<DiagnosticoFormData>(initialFormData)
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
+  const [selectedTime, setSelectedTime] = useState<string>("")
+  const [bookedSlots, setBookedSlots] = useState<string[]>([])
+  const [loadingSlots, setLoadingSlots] = useState(false)
 
   const set = (field: keyof DiagnosticoFormData, value: DiagnosticoFormData[keyof DiagnosticoFormData]) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -166,7 +173,7 @@ export function DiagnosticoForm() {
     setStepError(null)
   }
 
-  // Validação por etapa (obrigatórios apenas no passo 1)
+  // Validação por etapa (obrigatórios no passo 1 e 6)
   const validateStep = (): boolean => {
     if (step === 0) {
       if (!formData.nome.trim() || formData.nome.trim().length < 2) {
@@ -184,6 +191,16 @@ export function DiagnosticoForm() {
       }
       if (!formData.nome_clinica.trim() || formData.nome_clinica.trim().length < 2) {
         setStepError("Por favor, informe o nome da clínica.")
+        return false
+      }
+    }
+    if (step === 5) {
+      if (!selectedDate) {
+        setStepError("Por favor, selecione uma data para a reunião.")
+        return false
+      }
+      if (!selectedTime) {
+        setStepError("Por favor, selecione um horário para a reunião.")
         return false
       }
     }
@@ -206,11 +223,19 @@ export function DiagnosticoForm() {
     if (!validateStep()) return
     setIsSubmitting(true)
     setSubmitResult(null)
-    const response = await submitDiagnostico(formData)
+    const finalData: DiagnosticoFormData = {
+      ...formData,
+      data_reuniao: selectedDate && selectedTime
+        ? toISODateTimeLocal(selectedDate, selectedTime)
+        : "",
+    }
+    const response = await submitDiagnostico(finalData)
     setSubmitResult(response)
     setIsSubmitting(false)
     if (response.success) {
       setFormData(initialFormData)
+      setSelectedDate(undefined)
+      setSelectedTime("")
       setStep(0)
     }
   }
@@ -219,10 +244,10 @@ export function DiagnosticoForm() {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <CheckCircle2 className="h-16 w-16 text-[#ffb703] mb-4" />
-        <h3 className="text-2xl font-bold text-white mb-2">Solicitação Enviada!</h3>
+        <h3 className="text-2xl font-bold text-white mb-2">Reunião Confirmada!</h3>
         <p className="text-white/70 max-w-md">
-          Obrigado pelo seu interesse! Nossa equipe entrará em contato em breve para
-          agendar seu diagnóstico estratégico gratuito.
+          Perfeito! Seu diagnóstico estratégico gratuito está agendado.
+          Nossa equipe entrará em contato para confirmar os detalhes.
         </p>
       </div>
     )
@@ -236,9 +261,8 @@ export function DiagnosticoForm() {
           <div key={i} className="flex items-center gap-1.5 flex-1">
             <div className="flex flex-col items-center gap-1 flex-1">
               <div
-                className={`h-1.5 w-full rounded-full transition-colors duration-300 ${
-                  i <= step ? "bg-[#ffb703]" : "bg-white/20"
-                }`}
+                className={`h-1.5 w-full rounded-full transition-colors duration-300 ${i <= step ? "bg-[#ffb703]" : "bg-white/20"
+                  }`}
               />
               <span className={`text-[10px] hidden sm:block transition-colors ${i === step ? "text-[#ffb703] font-semibold" : "text-white/30"}`}>
                 {label}
@@ -605,6 +629,148 @@ export function DiagnosticoForm() {
               </SelectContent>
             </Select>
           </div>
+        </div>
+      )}
+
+      {/* ── Etapa 6: Agendamento ── */}
+      {step === 5 && (
+        <div className="flex flex-col gap-5">
+          <div className="flex items-center gap-2">
+            <CalendarDays className="h-5 w-5 text-[#ffb703]" />
+            <p className="text-white/80 text-sm">
+              Escolha o melhor dia e horário para sua reunião estratégica.
+            </p>
+          </div>
+
+          {/* Calendário */}
+          <div className="flex justify-center">
+            <div className="rounded-xl border border-[#1088f5]/20 bg-[#071824] p-3">
+              <DayPicker
+                mode="single"
+                selected={selectedDate}
+                onSelect={async (date) => {
+                  setSelectedDate(date);
+                  setSelectedTime("");
+                  setStepError(null);
+                  if (date) {
+                    const yyyy = date.getFullYear()
+                    const mm = String(date.getMonth() + 1).padStart(2, "0")
+                    const dd = String(date.getDate()).padStart(2, "0")
+                    const dateStr = `${yyyy}-${mm}-${dd}`
+                    setLoadingSlots(true)
+                    const occupied = await getHorariosOcupados(dateStr)
+                    setBookedSlots(occupied)
+                    setLoadingSlots(false)
+                  } else {
+                    setBookedSlots([])
+                  }
+                }}
+                // Bloqueia passados e garante que "hoje" seja bloqueado se for após o último horário (17h)
+                disabled={[
+                  { before: new Date() },
+                  (date) => {
+                    const isToday = date.toDateString() === new Date().toDateString();
+                    const currentHour = new Date().getHours();
+                    return isToday && currentHour >= 17; // Se já passou das 17h, bloqueia hoje
+                  }
+                ]}
+                // Mantemos o hidden para focar apenas no que importa
+                hidden={{ dayOfWeek: [0, 1, 3, 5, 6] }}
+                showOutsideDays={false}
+
+                classNames={{
+                  root: "rdp-custom mx-auto",
+                  months: "flex flex-col",
+                  month: "space-y-4",
+                  caption: "flex justify-center relative items-center mb-4",
+                  caption_label: "text-sm font-bold text-[#ffb703] uppercase tracking-widest",
+                  nav: "flex items-center",
+                  nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 transition-opacity",
+                  nav_button_previous: "absolute left-1",
+                  nav_button_next: "absolute right-1",
+                  table: "w-full border-collapse", // Removido o layout fixo que causa o esticamento
+                  head_row: "flex justify-center gap-4", // Centraliza os nomes dos dias (Ter/Qui)
+                  head_cell: "text-white/30 w-10 font-medium text-[10px] uppercase",
+                  row: "flex justify-center gap-4 mt-2", // Alinha as células das semanas
+                  cell: "text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
+                  day: "h-10 w-10 p-0 font-normal text-white hover:bg-[#1088f5]/20 rounded-lg transition-all border border-[#1088f5]/10",
+                  day_selected: "bg-[#1088f5] text-white font-bold hover:bg-[#1088f5] shadow-[0_0_15px_rgba(16,136,245,0.5)]",
+                  day_today: "border-[#ffb703] text-[#ffb703]",
+                  day_disabled: "text-white/10 opacity-50 cursor-not-allowed",
+                  day_hidden: "invisible", // Usa invisible em vez de display:none para manter o alinhamento se necessário
+                }}
+                // Customização dos labels para PT-BR
+                labels={{
+                  labelPrevious: () => "Mês anterior",
+                  labelNext: () => "Próximo mês",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Data selecionada */}
+          {selectedDate && (
+            <div className="rounded-lg bg-[#1088f5]/10 border border-[#1088f5]/30 px-4 py-2 text-center">
+              <span className="text-[#1088f5] text-sm font-medium capitalize">
+                {formatDatePtBR(selectedDate)}
+              </span>
+            </div>
+          )}
+
+          {/* Horários */}
+          {selectedDate && (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4 text-white/50" />
+                <Label className={cx.label + " !mb-0"}>
+                  {loadingSlots ? "Verificando disponibilidade..." : "Selecione o horário"}
+                </Label>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {TIME_SLOTS.map((time) => {
+                  const isBooked = bookedSlots.includes(time)
+                  const isSelected = selectedTime === time
+                  return (
+                    <button
+                      key={time}
+                      type="button"
+                      disabled={isBooked || loadingSlots}
+                      onClick={() => {
+                        setSelectedTime(time)
+                        setStepError(null)
+                      }}
+                      className={`rounded-lg border py-2.5 text-sm font-semibold transition-all duration-150 ${
+                        isBooked
+                          ? "bg-red-900/20 border-red-500/30 text-red-400/50 cursor-not-allowed line-through"
+                          : isSelected
+                          ? "bg-[#ffb703] border-[#ffb703] text-[#040d18]"
+                          : "bg-[#071824] border-[#1088f5]/25 text-white/70 hover:border-[#1088f5]/60 hover:text-white"
+                      }`}
+                      title={isBooked ? "Horário indisponível" : undefined}
+                    >
+                      {time}
+                      {isBooked && (
+                        <span className="block text-[9px] font-normal mt-0.5 text-red-400/60">Ocupado</span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Resumo */}
+          {selectedDate && selectedTime && (
+            <div className="rounded-xl bg-[#ffb703]/10 border border-[#ffb703]/30 px-5 py-4 flex items-center gap-3">
+              <CalendarDays className="h-5 w-5 text-[#ffb703] shrink-0" />
+              <div>
+                <div className="text-xs text-[#ffb703]/70 uppercase tracking-wider font-medium">Reunião agendada</div>
+                <div className="text-white font-semibold text-sm mt-0.5 capitalize">
+                  {formatDatePtBR(selectedDate)} — {selectedTime}h
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

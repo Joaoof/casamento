@@ -30,6 +30,8 @@ export type DiagnosticoFormData = {
   principal_desafio: string
   maior_dificuldade: string
   objetivo_crescimento: string
+  // Etapa 6 - Agendamento
+  data_reuniao: string
 }
 
 export type DiagnosticoResult = {
@@ -61,6 +63,23 @@ function toIntOrNull(value: number | ""): number | null {
 
 function toNumericOrNull(value: number | ""): number | null {
   return value !== "" && !isNaN(Number(value)) ? Number(value) : null
+}
+
+export async function getHorariosOcupados(date: string): Promise<string[]> {
+  try {
+    const supabase = await createClient()
+    const { data } = await supabase
+      .from("diagnosticos")
+      .select("data_reuniao")
+      .like("data_reuniao", `${date}%`)
+
+    if (!data) return []
+    return data
+      .filter((row) => row.data_reuniao)
+      .map((row) => (row.data_reuniao as string).split("T")[1])
+  } catch {
+    return []
+  }
 }
 
 export async function submitDiagnostico(
@@ -109,6 +128,7 @@ export async function submitDiagnostico(
       principal_desafio: formData.principal_desafio || null,
       maior_dificuldade: formData.maior_dificuldade || null,
       objetivo_crescimento: formData.objetivo_crescimento || null,
+      data_reuniao: formData.data_reuniao || null,
     })
 
     // Verifica duplicidade de email
@@ -141,6 +161,23 @@ export async function submitDiagnostico(
       }
     }
 
+    // Verifica se o horário já está ocupado
+    if (formData.data_reuniao) {
+      const { data: existingSlot } = await supabase
+        .from("diagnosticos")
+        .select("id")
+        .eq("data_reuniao", formData.data_reuniao)
+        .maybeSingle()
+
+      if (existingSlot) {
+        return {
+          success: false,
+          message: "Horário indisponível",
+          error: "Este horário já foi reservado por outra empresa. Por favor, escolha outro horário disponível.",
+        }
+      }
+    }
+
     const { error: insertError } = await supabase.from("diagnosticos").insert({
       nome_responsavel: formData.nome.trim(),
       email: normalizedEmail,
@@ -164,6 +201,7 @@ export async function submitDiagnostico(
       principal_desafio: formData.principal_desafio || null,
       maior_dificuldade: formData.maior_dificuldade || null,
       objetivo_crescimento: formData.objetivo_crescimento || null,
+      data_reuniao: formData.data_reuniao || null,
       status: "pendente",
     })
 
