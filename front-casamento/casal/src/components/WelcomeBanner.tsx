@@ -17,7 +17,7 @@ const WelcomeBanner: React.FC<WelcomeBannerProps> = ({
         if (sessionStorage.getItem(welcomeSeenKey)) {
             setStep('done');
             return;
-        }
+        } //dd
 
         const timers = [
             setTimeout(() => setIsVisible(true), 500),
