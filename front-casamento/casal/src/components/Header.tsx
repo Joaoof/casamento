@@ -1,5 +1,5 @@
 import { Heart, Menu, X, Clock, MapPin, GlassWater, Music, LogIn, CheckCircle, Settings } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import LoginModal from "./LoginModal";
 
 type HeaderProps = {
@@ -15,10 +15,55 @@ type TimeLeft = {
   segundos: number;
 };
 
+const NAV_ITEMS = [
+  { label: "Início", href: "#inicio" },
+  { label: "Nossa História", href: "#nossa-historia" },
+  { label: "O Evento", href: "#o-evento" },
+  { label: "Lista de Presentes", href: "#lista-presentes" },
+];
+
+// COMPONENTE EXTRAÍDO: Previne re-renderizações destrutivas e gargalos de memória.
+function CircleProgress({ percentage, color, value, label }: {
+  percentage: number; color: string; value: number; label: string;
+}) {
+  const radius = 50;
+  const circumference = 2 * Math.PI * radius;
+  // Trava a porcentagem em um máximo de 100% para evitar quebra do SVG se dias > 365
+  const clampedPercentage = Math.min(Math.max(percentage, 0), 1);
+  const strokeDashoffset = circumference - clampedPercentage * circumference;
+  const rotation = clampedPercentage * 360;
+
+  return (
+    <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 flex flex-col items-center justify-center bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-blue-100">
+      <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r={radius} stroke="#dbeafe" strokeWidth="4" fill="none" />
+        <circle cx="60" cy="60" r={radius} stroke={color} strokeWidth="4" fill="none"
+          strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round"
+          className="transition-all duration-1000 ease-linear"
+        />
+        <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '60px 60px' }}
+          className="transition-all duration-1000 ease-linear">
+          <circle cx="110" cy="60" r="4" fill={color} />
+          <circle cx="110" cy="60" r="8" fill={color} opacity="0.25" />
+        </g>
+      </svg>
+      <div className="relative z-10 flex flex-col items-center">
+        <span className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#1B3A6B] tracking-wider tabular-nums">
+          {value.toString().padStart(2, "0")}
+        </span>
+        <span className="text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.2em] text-[#4A7AB5] mt-0.5 sm:mt-1 uppercase font-medium">
+          {label}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function Header({
-  coupleNames = "Luís & Vitoria",
-  weddingDate = "25 de Julho de 2026",
-  weddingDateISO = "2026-07-25T18:00:00",
+  coupleNames = "Luis & Vitória",
+  weddingDate = "05/09/2026",
+  // Adicionado Offset -03:00 para garantir sincronia global ao fuso horário correto
+  weddingDateISO = "2026-09-05T16:30:00-03:00", 
 }: HeaderProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -26,9 +71,19 @@ export default function Header({
   const [isAccessModalOpen, setIsAccessModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [confirmState, setConfirmState] = useState<'idle' | 'loading' | 'success'>('idle');
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
-  // ✅ Dispara o overlay — chamado pelo botão da navbar E pelo botão dentro do modal de acesso
+  const handleMobileNavClick = (href: string) => {
+    setIsMobileOpen(false);
+    const id = href.replace('#', '');
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.history.replaceState(null, '', href);
+      return;
+    }
+    window.location.hash = href;
+  };
+
   function handleConfirmarPresenca() {
     setIsAccessModalOpen(false);
     setConfirmState('loading');
@@ -40,10 +95,12 @@ export default function Header({
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const targetDate = new Date(weddingDateISO).getTime();
+
+    const updateTimer = () => {
       const now = new Date().getTime();
-      const targetDate = new Date(weddingDateISO).getTime();
       const difference = targetDate - now;
+
       if (difference > 0) {
         setTimeLeft({
           dias: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -51,8 +108,16 @@ export default function Header({
           minutos: Math.floor((difference / 1000 / 60) % 60),
           segundos: Math.floor((difference / 1000) % 60),
         });
+      } else {
+        // Fix: Zera os contadores e interrompe o intervalo caso a data passe
+        setTimeLeft({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
+        clearInterval(interval);
       }
-    }, 1000);
+    };
+
+    updateTimer(); // Chamada inicial para não haver atraso de 1s na primeira renderização
+    const interval = setInterval(updateTimer, 1000);
+
     return () => clearInterval(interval);
   }, [weddingDateISO]);
 
@@ -62,59 +127,32 @@ export default function Header({
     return () => { document.body.style.overflow = "unset"; };
   }, [isScheduleModalOpen, isAccessModalOpen, isLoginModalOpen]);
 
-  function CircleProgress({ percentage, color, value, label }: {
-    percentage: number; color: string; value: number; label: string;
-  }) {
-    const radius = 50;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - percentage * circumference;
-    const rotation = percentage * 360;
-
-    return (
-      <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 flex flex-col items-center justify-center bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-blue-100">
-        <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-          <circle cx="60" cy="60" r={radius} stroke="#dbeafe" strokeWidth="4" fill="none" />
-          <circle cx="60" cy="60" r={radius} stroke={color} strokeWidth="4" fill="none"
-            strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round"
-            className="transition-all duration-1000 ease-linear"
-          />
-          <g style={{ transform: `rotate(${rotation}deg)`, transformOrigin: '60px 60px' }}
-            className="transition-all duration-1000 ease-linear">
-            <circle cx="110" cy="60" r="4" fill={color} />
-            <circle cx="110" cy="60" r="8" fill={color} opacity="0.25" />
-          </g>
-        </svg>
-        <div className="relative z-10 flex flex-col items-center">
-          <span className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#1B3A6B] tracking-wider tabular-nums">
-            {value.toString().padStart(2, "0")}
-          </span>
-          <span className="text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.2em] text-[#4A7AB5] mt-0.5 sm:mt-1 uppercase font-medium">
-            {label}
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  const diasPct = timeLeft.dias / 365;
-  const horasPct = timeLeft.horas / 24;
-  const minutosPct = timeLeft.minutos / 60;
-  const segundosPct = timeLeft.segundos / 60;
-
-  const cronogramaEventos = [
-    { time: "18:00", title: "Cerimônia Religiosa", desc: "A troca de alianças e votos na igreja.", icon: Heart },
-    { time: "19:00", title: "Recepção e Coquetel", desc: "Brindes de boas-vindas aos convidados.", icon: GlassWater },
-    { time: "20:30", title: "Jantar Principal", desc: "Momento para compartilhar.", icon: MapPin },
-    { time: "22:00", title: "Festa e Pista de Dança", desc: "Abertura da pista de dança.", icon: Music },
-  ];
+  const cronogramaEventos = useMemo(() => [
+    { time: "16:30", title: "Cerimônia Religiosa", desc: "A troca de alianças e votos na igreja.", icon: Heart },
+    { time: "18:00", title: "Recepção", desc: "Brindes de boas-vindas aos convidados.", icon: GlassWater },
+    { time: "19:30", title: "Jantar Principal", desc: "Momento para compartilhar uma deliciosa refeição.", icon: MapPin },
+    { time: "21:00", title: "Festa", desc: "Abertura da pista de dança para celebrarmos juntos.", icon: Music },
+  ], []);
 
   return (
-    <div className="min-h-screen bg-[#4A7AB5] text-slate-800 flex flex-col">
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap');`}</style>
+    <div id="inicio" className="min-h-screen bg-[#4A7AB5] text-slate-800 flex flex-col">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap');
+        @keyframes spin-reverse {
+          from { transform: rotate(360deg); }
+          to   { transform: rotate(0deg); }
+        }
+        @keyframes progress-fill {
+          from { width: 0%; }
+          to   { width: 100%; }
+        }
+        @keyframes draw-check {
+          from { stroke-dashoffset: 40; opacity: 0; }
+          to   { stroke-dashoffset: 0; opacity: 1; }
+        }
+      `}</style>
 
-      {/* ============================================================
-          BOTÃO FLUTUANTE — Área do Casal
-      ============================================================ */}
+      {/* BOTÃO FLUTUANTE */}
       <button
         onClick={() => setIsLoginModalOpen(true)}
         title="Área do Casal"
@@ -127,9 +165,7 @@ export default function Header({
         </span>
       </button>
 
-      {/* ============================================================
-          OVERLAY DE CONFIRMAÇÃO — cobre a tela toda
-      ============================================================ */}
+      {/* OVERLAY DE CONFIRMAÇÃO */}
       {(confirmState === 'loading' || confirmState === 'success') && (
         <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#1B3A6B]/80 backdrop-blur-md">
           <div className={`flex flex-col items-center justify-center gap-6 p-10 rounded-3xl bg-white shadow-2xl w-[280px] transition-all duration-500 ${confirmState === 'success' ? 'scale-105' : 'scale-100'}`}>
@@ -138,20 +174,8 @@ export default function Header({
             {confirmState === 'loading' && (
               <>
                 <div className="relative w-24 h-24 flex items-center justify-center">
-                  <style>{`
-                      @keyframes spin-reverse {
-                        from { transform: rotate(360deg); }
-                        to   { transform: rotate(0deg); }
-                      }
-                      @keyframes progress-fill {
-                        from { width: 0%; }
-                        to   { width: 100%; }
-                      }
-                    `}</style>
-                  {/* Coração no centro */}
                   <img src="https://cdn-icons-png.flaticon.com/512/8296/8296621.png" alt="" />
                 </div>
-
                 <div className="text-center">
                   <p className="text-[#1B3A6B] font-semibold text-xl leading-snug"
                     style={{ fontFamily: "serif", letterSpacing: '0.05em' }}>
@@ -161,8 +185,6 @@ export default function Header({
                     Preparando sua confirmação...
                   </p>
                 </div>
-
-                {/* Barra de progresso */}
                 <div className="w-full h-1.5 bg-blue-100 rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-[#4A7AB5] to-[#1B3A6B] rounded-full"
                     style={{ animation: 'progress-fill 2.5s ease-in-out forwards' }} />
@@ -178,14 +200,8 @@ export default function Header({
                   <div className="w-24 h-24 rounded-full bg-green-50 border-4 border-green-400 flex items-center justify-center shadow-lg">
                     <svg className="w-12 h-12 text-green-500" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" strokeWidth="2.5">
-                      <style>{`
-                        @keyframes draw-check {
-                          from { stroke-dashoffset: 40; opacity: 0; }
-                          to   { stroke-dashoffset: 0;  opacity: 1; }
-                        }
-                      `}</style>
                       <polyline points="4,13 9,18 20,7" strokeLinecap="round" strokeLinejoin="round"
-                        style={{ strokeDasharray: 40, strokeDashoffset: 0, animation: 'draw-check 0.5s ease-out forwards' }} />
+                        style={{ strokeDasharray: 40, strokeDashoffset: 40, animation: 'draw-check 0.5s ease-out forwards' }} />
                     </svg>
                   </div>
                 </div>
@@ -204,9 +220,7 @@ export default function Header({
         </div>
       )}
 
-      {/* ============================================================
-          MODAL: CRONOGRAMA
-      ============================================================ */}
+      {/* MODAL: CRONOGRAMA */}
       {isScheduleModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
           <div className="absolute inset-0 bg-[#1B3A6B]/60 backdrop-blur-sm" onClick={() => setIsScheduleModalOpen(false)} />
@@ -250,9 +264,7 @@ export default function Header({
         </div>
       )}
 
-      {/* ============================================================
-          MODAL: ACESSO — Confirmar Presença ou Área do Casal
-      ============================================================ */}
+      {/* MODAL: ACESSO */}
       {isAccessModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
           <div className="absolute inset-0 bg-[#1B3A6B]/60 backdrop-blur-sm"
@@ -273,7 +285,6 @@ export default function Header({
             <div className="px-6 pb-8 -mt-1 flex flex-col gap-4">
               <p className="text-center text-slate-500 text-sm mb-2">O que você deseja fazer?</p>
 
-              {/* ✅ Confirmar Presença → dispara o overlay */}
               <button
                 onClick={handleConfirmarPresenca}
                 className="group w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#C8DCF0] hover:border-[#4A7AB5] hover:bg-blue-50 transition-all"
@@ -315,7 +326,7 @@ export default function Header({
       {/* CONTAINER HERO */}
       <div className="w-full flex flex-col min-h-screen relative">
         <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url("/img1.jpeg")' }} />
+          style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url("/img2.jpeg")' }} />
 
         {/* NAVBAR */}
         <header className="relative md:sticky md:top-0 z-50 w-full bg-transparent">
@@ -323,27 +334,23 @@ export default function Header({
             <img src="https://cdn-icons-png.flaticon.com/512/185/185482.png" alt="Logo" width={40} className="brightness-0 invert" />
 
             <nav className="hidden lg:flex items-center gap-8 text-sm text-white font-medium drop-shadow-md">
-              {["Início", "Nossa História", "O Evento", "Lista de Presentes"].map((item) => (
-                <a key={item} href="#" className="hover:text-blue-200 transition">{item}</a>
+              {NAV_ITEMS.map((item) => (
+                <a key={item.label} href={item.href} className="hover:text-blue-200 transition">{item.label}</a>
               ))}
             </nav>
 
             <div className="flex items-center gap-3">
-              {/* ✅ Botão limpo — só ícone + texto + fundo azul */}
               <button
                 onClick={() => setIsLoginModalOpen(true)}
                 className="hidden lg:flex items-center gap-2 px-6 py-2.5 rounded-full transition shadow-sm backdrop-blur-md"
                 style={{
-                  background: "rgba(162, 207, 254, 0.25)", // azul serenity translúcido
+                  background: "rgba(162, 207, 254, 0.25)",
                   border: "1px solid rgba(162, 207, 254, 0.4)",
                   color: "#1B2A41"
                 }}
               >
                 <CheckCircle className="w-4 h-4 shrink-0 opacity-80" />
-                <span
-                  style={{ fontFamily: "serif" }}
-                  className="text-lg tracking-wide leading-none"
-                >
+                <span style={{ fontFamily: "serif" }} className="text-lg tracking-wide leading-none">
                   Área do Casal
                 </span>
               </button>
@@ -357,10 +364,15 @@ export default function Header({
           {isMobileOpen && (
             <div className="lg:hidden bg-white/95 backdrop-blur absolute w-full left-0 top-full">
               <div className="flex flex-col gap-3 px-6 py-6 text-sm text-[#1B3A6B]">
-                {["Início", "Nossa História", "O Evento", "Lista de Presentes"].map((item) => (
-                  <button key={item} className="text-left font-medium hover:text-[#4A7AB5] transition">{item}</button>
+                {NAV_ITEMS.map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => handleMobileNavClick(item.href)}
+                    className="text-left font-medium hover:text-[#4A7AB5] transition"
+                  >
+                    {item.label}
+                  </button>
                 ))}
-                {/* ✅ Mobile: abre modal de acesso (com as duas opções) */}
                 <button
                   onClick={() => { setIsMobileOpen(false); setIsAccessModalOpen(true); }}
                   className="mt-2 flex items-center justify-center gap-2 bg-[#1B3A6B] text-white py-2.5 rounded-full"
@@ -401,21 +413,19 @@ export default function Header({
       {/* COUNTDOWN */}
       <section className="py-20 md:py-24 bg-[#F5F5DC] border-t border-[#D8B56A]">
         <div className="mx-auto max-w-[900px] text-center px-6 relative">
-
           <h2 className="text-3xl md:text-4xl font-serif mb-4 text-[#8B4513]">
             O grande dia está chegando
           </h2>
-
           <p className="text-[#8B4513]/70 mb-12 md:mb-16 text-xs md:text-sm font-medium uppercase tracking-[0.1em] md:tracking-[0.2em]">
             Cada segundo nos aproxima desse momento especial
           </p>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center relative z-10 max-w-sm lg:max-w-none mx-auto">
             {[
-              { label: "Dias", value: timeLeft.dias, percentage: diasPct, color: "#8B4513" },
-              { label: "Horas", value: timeLeft.horas, percentage: horasPct, color: "#A0522D" },
-              { label: "Minutos", value: timeLeft.minutos, percentage: minutosPct, color: "#D8B56A" },
-              { label: "Segundos", value: timeLeft.segundos, percentage: segundosPct, color: "#000000" },
+              { label: "Dias", value: timeLeft.dias, percentage: timeLeft.dias / 365, color: "#8B4513" },
+              { label: "Horas", value: timeLeft.horas, percentage: timeLeft.horas / 24, color: "#A0522D" },
+              { label: "Minutos", value: timeLeft.minutos, percentage: timeLeft.minutos / 60, color: "#D8B56A" },
+              { label: "Segundos", value: timeLeft.segundos, percentage: timeLeft.segundos / 60, color: "#000000" },
             ].map((item) => (
               <CircleProgress key={item.label} {...item} />
             ))}

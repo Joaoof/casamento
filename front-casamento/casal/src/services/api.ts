@@ -56,21 +56,21 @@ export const api = {
     return response.json();
   },
 
-  async updateGift(id: string, updates: Partial<Gift>, coupleSlug?: string): Promise<Gift> {
+  async updateGiftImage(id: string, imageUrl: string, coupleSlug?: string): Promise<Gift> {
     try {
-      const response = await fetch(withCoupleSlug(`/gifts/${id}`, coupleSlug), {
+      const response = await fetch(withCoupleSlug(`/gifts/${id}/image`, coupleSlug), {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updates),
-      })
+        body: JSON.stringify({ imageUrl }),
+      });
 
-      if (!response.ok) throw new Error('Falha ao atualizar presente');
+      if (!response.ok) throw new Error('Falha ao atualizar imagem do presente');
       return response.json();
     } catch (error) {
-      console.error('Erro ao atualizar presente:', error);
+      console.error('Erro ao atualizar imagem do presente:', error);
       throw error;
     }
   },

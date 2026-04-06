@@ -3,6 +3,7 @@ import { Heart, MapPin, Calendar } from "lucide-react"
 import StickyReveal from "./Reveal"
 import { useNavigate } from "react-router-dom"
 import { useState, useRef, useEffect } from 'react'
+import backgroundImg from '../../public/img3.jpeg'; // Caminho relativo real para a sua imagem
 
 // ─────────────────────────────────────────
 // DADOS
@@ -455,6 +456,7 @@ export default function OurStory() {
 
   return (
     <div
+      id="nossa-historia"
       className="relative flex flex-col overflow-x-hidden font-sans text-slate-800 dark:text-slate-100"
       style={{ width: '100vw', marginLeft: '50%', transform: 'translateX(-50%)' }}
     >
@@ -513,12 +515,12 @@ export default function OurStory() {
 
           {/* IMAGEM COM MELHOR QUALIDADE */}
           <div
-            className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: 'url("img3.jpeg")',
-              filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
-            }}
-          />
+  className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
+  style={{
+    backgroundImage: `url(${backgroundImg})`,
+    filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
+  }}
+/>
 
           {/* OVERLAY CORRETO (quente + leve) */}
           <div
@@ -568,7 +570,7 @@ export default function OurStory() {
                 <Calendar className="h-3 w-3 md:h-3.5 md:w-3.5"
                   style={{ color: "#D8B56A" }}
                 />
-                25 de Julho, 2026
+              05 de Setembro, 2026
               </span>
 
               <span className="hidden sm:block" style={{ color: "rgba(245,245,220,0.4)" }}>·</span>

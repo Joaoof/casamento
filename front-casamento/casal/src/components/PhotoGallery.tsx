@@ -1,11 +1,15 @@
 import React from 'react'
-import { X, ChevronLeft, ChevronRight, ZoomIn, Heart } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
 
 const allPhotos = [
   { url: '/img2.jpeg', caption: 'O começo de tudo' },
   { url: '/img1.jpeg', caption: 'Cada detalhe importa' },
   { url: '/img3.jpeg', caption: 'Momentos eternos' },
-  { url: '/im4.png', caption: 'Nossa história' },
+  { url: '/img4.jpeg', caption: 'Nossa história' },
+  { url: '/img5.jpeg', caption: 'Nossa história' },
+  { url: '/img6.jpeg', caption: 'Nossa história' },
+  { url: '/img7.jpeg', caption: 'Nossa história' },
+  { url: '/img8.jpeg', caption: 'Nossa história' },
 ]
 
 type Props = { onClose: () => void }

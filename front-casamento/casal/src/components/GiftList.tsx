@@ -43,6 +43,11 @@ const GiftList: React.FC<GiftListProps> = ({
     setIsLoading(true);
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+
+if (!API_URL) {
+  throw new Error('VITE_API_URL não definida');
+}
       const response = await fetch(`${API_URL}/gifts${coupleSlug ? `?couple=${encodeURIComponent(coupleSlug)}` : ''}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -216,7 +221,7 @@ const GiftList: React.FC<GiftListProps> = ({
   };
 
   return (
-    <div className="animate-fade-in max-w-5xl mx-auto px-4">
+    <div id="lista-presentes" className="animate-fade-in max-w-5xl mx-auto px-4">
 
       {/* ── Título e imagem ── */}
       <div className="text-center mb-1">

@@ -6,13 +6,13 @@ export type CoupleConfig = {
   cityLabel: string;
 };
 
-export const DEFAULT_COUPLE_SLUG = 'luis-natiele';
+export const DEFAULT_COUPLE_SLUG = 'luis-vitoria';
 
 const COUPLES: Record<string, CoupleConfig> = {
   [DEFAULT_COUPLE_SLUG]: {
     slug: DEFAULT_COUPLE_SLUG,
     names: 'Luís & Vitoria',
-    weddingDateLabel: '25 de Julho de 2026',
+    weddingDateLabel: '05 de Setembro de 2026',
     weddingDateISO: '2026-07-25T18:00:00',
     cityLabel: 'Araguaína, TO',
   },

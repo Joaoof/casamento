@@ -6,8 +6,12 @@ import PhotoGallery from './PhotoGallery'
 const photos = [
   { url: '/img1.jpeg', caption: 'O começo de tudo' },
   { url: '/img3.jpeg', caption: 'Cada detalhe importa' },
-  { url: '/im4.jpeg', caption: 'Momentos eternos' },
+  { url: '/img4.jpeg', caption: 'Momentos eternos' },
   { url: '/img2.jpeg', caption: 'Nossa história' },
+  { url: '/img5.jpeg', caption: 'Nossa história' },
+  { url: '/img6.jpeg', caption: 'Nossa história' },
+  { url: '/img7.jpeg', caption: 'Nossa história' },
+  { url: '/img8.jpeg', caption: 'Nossa história' },
 ].filter(p => p.url)
 
 export default function PhotoCarousel() {
@@ -42,6 +46,7 @@ export default function PhotoCarousel() {
   return (
     <>
       <section
+        id="o-evento"
         className="relative w-full overflow-hidden py-24"
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
