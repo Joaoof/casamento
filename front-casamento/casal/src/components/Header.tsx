@@ -277,20 +277,6 @@ export default function Header({
             <div className="h-4 bg-white relative -mt-4 rounded-t-[2rem]" />
             <div className="px-6 pb-8 -mt-1 flex flex-col gap-4">
               <p className="text-center text-slate-500 text-sm mb-2 font-['Open_Sans',_sans-serif]">O que você deseja fazer?</p>
-
-              <button
-                onClick={handleConfirmarPresenca}
-                className="group w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-[#C8DCF0] hover:border-[#4A7AB5] hover:bg-blue-50 transition-all"
-              >
-                <div className="w-12 h-12 rounded-xl bg-blue-50 group-hover:bg-[#4A7AB5] flex items-center justify-center transition-colors shrink-0">
-                  <CheckCircle className="w-6 h-6 text-[#4A7AB5] group-hover:text-white transition-colors" />
-                </div>
-                <div className="text-left">
-                  <p className="font-semibold text-[#1B3A6B] text-sm font-['Poppins',_sans-serif]">Confirmar Presença</p>
-                  <p className="text-slate-400 text-xs mt-0.5 font-['Open_Sans',_sans-serif]">Sou um convidado e quero confirmar</p>
-                </div>
-              </button>
-
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-blue-100" />
                 <span className="text-xs text-slate-400 uppercase tracking-widest font-['Lato',_sans-serif]">ou</span>
@@ -385,15 +371,6 @@ export default function Header({
                     {item.label}
                   </button>
                 ))}
-                <button
-                  onClick={() => { setIsMobileOpen(false); setIsAccessModalOpen(true); }}
-                  className="mt-2 flex items-center justify-center gap-2 bg-[#1B3A6B] text-white py-2.5 rounded-full font-['Poppins',_sans-serif]"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  <span className="text-lg tracking-wider leading-none">
-                    Confirmar Presença
-                  </span>
-                </button>
               </div>
             </div>
           )}
