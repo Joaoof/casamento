@@ -22,13 +22,11 @@ const NAV_ITEMS = [
   { label: "Lista de Presentes", href: "#lista-presentes" },
 ];
 
-// COMPONENTE EXTRAÍDO: Previne re-renderizações destrutivas e gargalos de memória.
 function CircleProgress({ percentage, color, value, label }: {
   percentage: number; color: string; value: number; label: string;
 }) {
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
-  // Trava a porcentagem em um máximo de 100% para evitar quebra do SVG se dias > 365
   const clampedPercentage = Math.min(Math.max(percentage, 0), 1);
   const strokeDashoffset = circumference - clampedPercentage * circumference;
   const rotation = clampedPercentage * 360;
@@ -48,10 +46,10 @@ function CircleProgress({ percentage, color, value, label }: {
         </g>
       </svg>
       <div className="relative z-10 flex flex-col items-center">
-        <span className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#1B3A6B] tracking-wider tabular-nums">
+        <span className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#1B3A6B] tracking-wider tabular-nums font-['Poppins',_sans-serif]">
           {value.toString().padStart(2, "0")}
         </span>
-        <span className="text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.2em] text-[#4A7AB5] mt-0.5 sm:mt-1 uppercase font-medium">
+        <span className="text-[8px] sm:text-[9px] md:text-[10px] tracking-[0.2em] text-[#4A7AB5] mt-0.5 sm:mt-1 uppercase font-bold font-['Lato',_sans-serif]">
           {label}
         </span>
       </div>
@@ -62,7 +60,6 @@ function CircleProgress({ percentage, color, value, label }: {
 export default function Header({
   coupleNames = "Luis & Vitória",
   weddingDate = "05/09/2026",
-  // Adicionado Offset -03:00 para garantir sincronia global ao fuso horário correto
   weddingDateISO = "2026-09-05T16:30:00-03:00", 
 }: HeaderProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
@@ -109,13 +106,12 @@ export default function Header({
           segundos: Math.floor((difference / 1000) % 60),
         });
       } else {
-        // Fix: Zera os contadores e interrompe o intervalo caso a data passe
         setTimeLeft({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
         clearInterval(interval);
       }
     };
 
-    updateTimer(); // Chamada inicial para não haver atraso de 1s na primeira renderização
+    updateTimer(); 
     const interval = setInterval(updateTimer, 1000);
 
     return () => clearInterval(interval);
@@ -135,9 +131,11 @@ export default function Header({
   ], []);
 
   return (
-    <div id="inicio" className="min-h-screen bg-[#4A7AB5] text-slate-800 flex flex-col">
+    <div id="inicio" className="min-h-screen bg-[#4A7AB5] text-slate-800 flex flex-col font-['Open_Sans',_sans-serif]">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@300..700&display=swap');
+        /* Importando Lato, Open Sans, Poppins e Teko */
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:wght@300;400;500;600;700&family=Teko:wght@300..700&display=swap');
+        
         @keyframes spin-reverse {
           from { transform: rotate(360deg); }
           to   { transform: rotate(0deg); }
@@ -170,18 +168,16 @@ export default function Header({
         <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#1B3A6B]/80 backdrop-blur-md">
           <div className={`flex flex-col items-center justify-center gap-6 p-10 rounded-3xl bg-white shadow-2xl w-[280px] transition-all duration-500 ${confirmState === 'success' ? 'scale-105' : 'scale-100'}`}>
 
-            {/* ESTADO: CARREGANDO */}
             {confirmState === 'loading' && (
               <>
                 <div className="relative w-24 h-24 flex items-center justify-center">
                   <img src="https://cdn-icons-png.flaticon.com/512/8296/8296621.png" alt="" />
                 </div>
                 <div className="text-center">
-                  <p className="text-[#1B3A6B] font-semibold text-xl leading-snug"
-                    style={{ fontFamily: "serif", letterSpacing: '0.05em' }}>
+                  <p className="text-[#1B3A6B] font-semibold text-xl leading-snug font-['Poppins',_sans-serif]">
                     Espera só um momento
                   </p>
-                  <p className="text-[#4A7AB5] text-xs mt-1 animate-pulse">
+                  <p className="text-[#4A7AB5] text-xs mt-1 animate-pulse font-['Open_Sans',_sans-serif]">
                     Preparando sua confirmação...
                   </p>
                 </div>
@@ -192,14 +188,12 @@ export default function Header({
               </>
             )}
 
-            {/* ESTADO: SUCESSO */}
             {confirmState === 'success' && (
               <>
                 <div className="relative w-24 h-24 flex items-center justify-center">
                   <span className="absolute inline-flex w-full h-full rounded-full bg-green-400 opacity-20 animate-ping" />
                   <div className="w-24 h-24 rounded-full bg-green-50 border-4 border-green-400 flex items-center justify-center shadow-lg">
-                    <svg className="w-12 h-12 text-green-500" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" strokeWidth="2.5">
+                    <svg className="w-12 h-12 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="4,13 9,18 20,7" strokeLinecap="round" strokeLinejoin="round"
                         style={{ strokeDasharray: 40, strokeDashoffset: 40, animation: 'draw-check 0.5s ease-out forwards' }} />
                     </svg>
@@ -207,11 +201,10 @@ export default function Header({
                 </div>
 
                 <div className="text-center">
-                  <p className="text-green-600 font-bold text-2xl"
-                    style={{ fontFamily: "serif", letterSpacing: '0.05em' }}>
+                  <p className="text-green-600 font-bold text-2xl font-['Poppins',_sans-serif]">
                     Presença Confirmada!
                   </p>
-                  <p className="text-slate-400 text-xs mt-1">Que alegria! Te esperamos lá!</p>
+                  <p className="text-slate-400 text-xs mt-1 font-['Open_Sans',_sans-serif]">Que alegria! Te esperamos lá!</p>
                 </div>
               </>
             )}
@@ -226,7 +219,7 @@ export default function Header({
           <div className="absolute inset-0 bg-[#1B3A6B]/60 backdrop-blur-sm" onClick={() => setIsScheduleModalOpen(false)} />
           <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="bg-blue-50 border-b border-blue-100 px-6 py-5 flex items-center justify-between sticky top-0 z-10">
-              <h3 className="text-xl text-[#1B3A6B] flex items-center gap-2 font-semibold">
+              <h3 className="text-xl text-[#1B3A6B] flex items-center gap-2 font-semibold font-['Poppins',_sans-serif]">
                 <Clock className="w-5 h-5 text-[#4A7AB5]" />
                 Cronograma do Dia
               </h3>
@@ -245,9 +238,9 @@ export default function Header({
                         <Icon className="w-4 h-4 text-[#4A7AB5]" />
                       </div>
                       <div className="flex flex-col gap-1 items-start pt-1">
-                        <span className="text-[#4A7AB5] font-bold text-sm tracking-widest leading-none">{evento.time}</span>
-                        <h4 className="text-lg font-semibold text-[#1B3A6B] leading-tight mt-1">{evento.title}</h4>
-                        <p className="text-slate-500 text-sm leading-relaxed">{evento.desc}</p>
+                        <span className="text-[#4A7AB5] font-bold text-sm tracking-widest leading-none font-['Lato',_sans-serif]">{evento.time}</span>
+                        <h4 className="text-lg font-semibold text-[#1B3A6B] leading-tight mt-1 font-['Poppins',_sans-serif]">{evento.title}</h4>
+                        <p className="text-slate-500 text-sm leading-relaxed font-['Open_Sans',_sans-serif]">{evento.desc}</p>
                       </div>
                     </div>
                   );
@@ -256,7 +249,7 @@ export default function Header({
             </div>
             <div className="bg-blue-50 border-t border-blue-100 px-6 py-4 flex justify-end">
               <button onClick={() => setIsScheduleModalOpen(false)}
-                className="bg-[#1B3A6B] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-[#14305a] transition">
+                className="bg-[#1B3A6B] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-[#14305a] transition font-['Poppins',_sans-serif]">
                 Entendi
               </button>
             </div>
@@ -279,11 +272,11 @@ export default function Header({
                 <Heart className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-serif text-white mb-1">{coupleNames}</h3>
-              <p className="text-white/70 text-xs tracking-widest uppercase">{weddingDate}</p>
+              <p className="text-white/70 text-xs tracking-widest uppercase font-['Lato',_sans-serif]">{weddingDate}</p>
             </div>
             <div className="h-4 bg-white relative -mt-4 rounded-t-[2rem]" />
             <div className="px-6 pb-8 -mt-1 flex flex-col gap-4">
-              <p className="text-center text-slate-500 text-sm mb-2">O que você deseja fazer?</p>
+              <p className="text-center text-slate-500 text-sm mb-2 font-['Open_Sans',_sans-serif]">O que você deseja fazer?</p>
 
               <button
                 onClick={handleConfirmarPresenca}
@@ -293,14 +286,14 @@ export default function Header({
                   <CheckCircle className="w-6 h-6 text-[#4A7AB5] group-hover:text-white transition-colors" />
                 </div>
                 <div className="text-left">
-                  <p className="font-semibold text-[#1B3A6B] text-sm">Confirmar Presença</p>
-                  <p className="text-slate-400 text-xs mt-0.5">Sou um convidado e quero confirmar</p>
+                  <p className="font-semibold text-[#1B3A6B] text-sm font-['Poppins',_sans-serif]">Confirmar Presença</p>
+                  <p className="text-slate-400 text-xs mt-0.5 font-['Open_Sans',_sans-serif]">Sou um convidado e quero confirmar</p>
                 </div>
               </button>
 
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-blue-100" />
-                <span className="text-xs text-slate-400 uppercase tracking-widest">ou</span>
+                <span className="text-xs text-slate-400 uppercase tracking-widest font-['Lato',_sans-serif]">ou</span>
                 <div className="flex-1 h-px bg-blue-100" />
               </div>
 
@@ -312,8 +305,8 @@ export default function Header({
                   <LogIn className="w-6 h-6 text-[#1B3A6B] group-hover:text-white transition-colors" />
                 </div>
                 <div className="text-left">
-                  <p className="font-semibold text-[#1B3A6B] text-sm">Área do Casal</p>
-                  <p className="text-slate-400 text-xs mt-0.5">Acesso exclusivo para {coupleNames}</p>
+                  <p className="font-semibold text-[#1B3A6B] text-sm font-['Poppins',_sans-serif]">Área do Casal</p>
+                  <p className="text-slate-400 text-xs mt-0.5 font-['Open_Sans',_sans-serif]">Acesso exclusivo para {coupleNames}</p>
                 </div>
               </button>
             </div>
@@ -325,8 +318,25 @@ export default function Header({
 
       {/* CONTAINER HERO */}
       <div className="w-full flex flex-col min-h-screen relative">
-        <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url("/img2.jpeg")' }} />
+        <div className="absolute inset-0 z-0 overflow-hidden bg-[#1B3A6B]">
+          <picture>
+            {/* 1. Imagem para Mobile (Telas até 767px). Use uma foto VERTICAL (ex: 1080x1920) */}
+            <source media="(max-width: 767px)" srcSet="/img2.jpeg" />
+            
+            {/* 2. Imagem para Desktop (Telas maiores). Use a foto HORIZONTAL (ex: 1920x1080) */}
+            <source media="(min-width: 768px)" srcSet="/img2.jpeg" />
+            
+            {/* 3. Fallback */}
+            <img 
+              src="/img2.jpeg" 
+              alt="Fotografia de Luis e Vitória"
+              className="w-full h-full object-cover object-center"
+              fetchPriority="high" 
+              decoding="sync"
+            />
+          </picture>
+          <div className="absolute inset-0 bg-black/20 bg-gradient-to-b from-transparent to-black/50 backdrop-blur-[1px]" />
+        </div>
 
         {/* NAVBAR */}
         <header className="relative md:sticky md:top-0 z-50 w-full bg-transparent">
@@ -335,7 +345,9 @@ export default function Header({
 
             <nav className="hidden lg:flex items-center gap-8 text-sm text-white font-medium drop-shadow-md">
               {NAV_ITEMS.map((item) => (
-                <a key={item.label} href={item.href} className="hover:text-blue-200 transition">{item.label}</a>
+                <a key={item.label} href={item.href} className="hover:text-blue-200 transition font-['Poppins',_sans-serif]">
+                  {item.label}
+                </a>
               ))}
             </nav>
 
@@ -350,7 +362,7 @@ export default function Header({
                 }}
               >
                 <CheckCircle className="w-4 h-4 shrink-0 opacity-80" />
-                <span style={{ fontFamily: "serif" }} className="text-lg tracking-wide leading-none">
+                <span className="text-lg tracking-wide leading-none font-['Poppins',_sans-serif] font-medium text-white">
                   Área do Casal
                 </span>
               </button>
@@ -368,17 +380,17 @@ export default function Header({
                   <button
                     key={item.label}
                     onClick={() => handleMobileNavClick(item.href)}
-                    className="text-left font-medium hover:text-[#4A7AB5] transition"
+                    className="text-left font-medium hover:text-[#4A7AB5] transition font-['Poppins',_sans-serif]"
                   >
                     {item.label}
                   </button>
                 ))}
                 <button
                   onClick={() => { setIsMobileOpen(false); setIsAccessModalOpen(true); }}
-                  className="mt-2 flex items-center justify-center gap-2 bg-[#1B3A6B] text-white py-2.5 rounded-full"
+                  className="mt-2 flex items-center justify-center gap-2 bg-[#1B3A6B] text-white py-2.5 rounded-full font-['Poppins',_sans-serif]"
                 >
                   <CheckCircle className="w-4 h-4" />
-                  <span style={{ fontFamily: "'Teko', sans-serif" }} className="text-lg tracking-wider leading-none">
+                  <span className="text-lg tracking-wider leading-none">
                     Confirmar Presença
                   </span>
                 </button>
@@ -391,16 +403,22 @@ export default function Header({
         <section className="relative z-10 flex-grow flex flex-col justify-center items-center md:px-6 md:py-16">
           <div className="mx-auto max-w-[1100px] w-full">
             <div className="w-full flex flex-col items-center justify-center text-center text-white px-6 py-16">
-              <span className="text-xs tracking-[0.3em] uppercase text-blue-200 mb-4 drop-shadow-md">Reserve a data</span>
+              <span className="text-xs tracking-[0.3em] uppercase text-blue-200 mb-4 drop-shadow-md font-['Lato',_sans-serif] font-bold">
+                Reserve a data
+              </span>
+              
+              {/* TÍTULO PRINCIPAL (Mantido como font-serif) */}
               <h1 className="text-3xl md:text-6xl font-serif mb-6 drop-shadow-lg text-white">
                 {coupleNames}
               </h1>
-              <p className="text-xs md:text-xl text-white mb-8 drop-shadow-lg font-medium tracking-wide">
+              
+              <p className="text-xs md:text-xl text-white mb-8 drop-shadow-lg font-medium tracking-wide font-['Poppins',_sans-serif]">
                 {weddingDate}
               </p>
+              
               <button
                 onClick={() => setIsScheduleModalOpen(true)}
-                className="bg-[#1B3A6B] backdrop-blur-sm border border-white/40 text-white px-8 py-4 md:py-3 rounded-full text-sm hover:bg-[#14305a] transition shadow-lg w-full max-w-xs md:w-auto flex items-center justify-center gap-2 mx-auto"
+                className="bg-[#1B3A6B] backdrop-blur-sm border border-white/40 text-white px-8 py-4 md:py-3 rounded-full text-sm hover:bg-[#14305a] transition shadow-lg w-full max-w-xs md:w-auto flex items-center justify-center gap-2 mx-auto font-['Poppins',_sans-serif] font-medium"
               >
                 <Clock className="w-4 h-4" />
                 Ver cronograma do casamento
@@ -413,10 +431,13 @@ export default function Header({
       {/* COUNTDOWN */}
       <section className="py-20 md:py-24 bg-[#F5F5DC] border-t border-[#D8B56A]">
         <div className="mx-auto max-w-[900px] text-center px-6 relative">
+          
+          {/* TÍTULO PRINCIPAL SECUNDÁRIO (Mantido como font-serif) */}
           <h2 className="text-3xl md:text-4xl font-serif mb-4 text-[#8B4513]">
             O grande dia está chegando
           </h2>
-          <p className="text-[#8B4513]/70 mb-12 md:mb-16 text-xs md:text-sm font-medium uppercase tracking-[0.1em] md:tracking-[0.2em]">
+          
+          <p className="text-[#8B4513]/70 mb-12 md:mb-16 text-xs md:text-sm font-bold uppercase tracking-[0.1em] md:tracking-[0.2em] font-['Lato',_sans-serif]">
             Cada segundo nos aproxima desse momento especial
           </p>
 
