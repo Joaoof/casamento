@@ -3,6 +3,7 @@ import { Heart, MapPin, Calendar } from "lucide-react"
 import StickyReveal from "./Reveal"
 import { useNavigate } from "react-router-dom"
 import { useState, useRef, useEffect, useMemo } from 'react'
+import QRCode from 'react-qr-code'  
 import backgroundImg from '../../public/img3.jpeg'; // Caminho relativo real para a sua imagem
 
 // URL do convite no Canva — troque pelo link do seu convite
@@ -696,7 +697,7 @@ export default function OurStory() {
                 className="mb-4 text-[10px] font-semibold uppercase tracking-[0.35em]"
                 style={{ color: "#4A7AB5" }}
               >
-                25 · 07 · 2026 · Araguaína, TO
+                05 · 09 · 2026 · Araguaína, TO
               </p>
 
               <h2
@@ -728,7 +729,7 @@ export default function OurStory() {
                 className="text-sm font-semibold"
                 style={{ color: "#4A7AB5" }}
               >
-                15 de junho de 2026
+                01 de setembro de 2026
               </p>
 
               <CanvaInviteQR />
