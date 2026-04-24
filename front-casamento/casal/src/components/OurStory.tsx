@@ -6,7 +6,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import backgroundImg from '../../public/img3.jpeg'; // Caminho relativo real para a sua imagem
 
 // URL do convite no Canva — troque pelo link do seu convite
-const CANVA_INVITE_URL = "https://www.canva.com/design/DAHHalA3BP4/_MjyWGdTLA_AdhHS__Z3ZA/view?utm_content=DAHHalA3BP4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h742083[...]
+const CANVA_INVITE_URL = "https://www.canva.com/design/DAHHalA3BP4/_MjyWGdTLA_AdhHS__Z3ZA/view?utm_content=DAHHalA3BP4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h742083ca1f"
 const QR_SIZE = 180
 
 // ─────────────────────────────────────────
@@ -453,58 +453,6 @@ function StoriesEntry({
 }
 
 // ─────────────────────────────────────────
-// QR CODE — convite no Canva
-// ─────────────────────────────────────────
-function CanvaInviteQR() {
-  const qrSrc = useMemo(
-    () =>
-      `https://api.qrserver.com/v1/create-qr-code/?size=${QR_SIZE}x${QR_SIZE}&margin=8&ecc=M&data=${encodeURIComponent(
-        CANVA_INVITE_URL
-      )}`,
-    []
-  )
-
-  return (
-    <div className="mt-8 flex items-center gap-5">
-      <a
-        href={CANVA_INVITE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Abrir convite no Canva"
-        className="group shrink-0 rounded-xl bg-white p-2.5 shadow-md ring-1 ring-[#4A7AB5]/15 transition hover:-translate-y-0.5 hover:shadow-lg"
-      >
-        <img
-          src={qrSrc}
-          alt="QR Code para abrir o convite no Canva"
-          width={QR_SIZE}
-          height={QR_SIZE}
-          loading="lazy"
-          decoding="async"
-          className="block h-[120px] w-[120px] rounded-md"
-        />
-      </a>
-
-      <div className="flex flex-col">
-        <p
-          className="mb-1 text-[10px] font-semibold uppercase tracking-[0.3em]"
-          style={{ color: "#4A7AB5" }}
-        >
-          Convite digital
-        </p>
-        <p
-          className="text-sm leading-relaxed"
-          style={{ color: "rgba(27,42,65,0.75)" }}
-        >
-          Aponte a câmera para abrir o convite
-          <br />
-          completo no Canva.
-        </p>
-      </div>
-    </div>
-  )
-}
-
-// ─────────────────────────────────────────
 // PAGE
 // ─────────────────────────────────────────
 export default function OurStory() {
@@ -571,12 +519,12 @@ export default function OurStory() {
 
           {/* IMAGEM COM MELHOR QUALIDADE */}
           <div
-            className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${backgroundImg})`,
-              filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
-            }}
-          />
+  className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
+  style={{
+    backgroundImage: `url(${backgroundImg})`,
+    filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
+  }}
+/>
 
           {/* OVERLAY CORRETO (quente + leve) */}
           <div
@@ -626,7 +574,7 @@ export default function OurStory() {
                 <Calendar className="h-3 w-3 md:h-3.5 md:w-3.5"
                   style={{ color: "#D8B56A" }}
                 />
-                05 de Setembro, 2026
+              05 de Setembro, 2026
               </span>
 
               <span className="hidden sm:block" style={{ color: "rgba(245,245,220,0.4)" }}>·</span>
@@ -748,7 +696,7 @@ export default function OurStory() {
                 className="mb-4 text-[10px] font-semibold uppercase tracking-[0.35em]"
                 style={{ color: "#4A7AB5" }}
               >
-                05/09/2026 · Araguaína, TO
+                05 · 09 · 2026 · Araguaína, TO
               </p>
 
               <h2
