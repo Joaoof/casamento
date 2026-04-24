@@ -696,7 +696,7 @@ export default function OurStory() {
                 className="mb-4 text-[10px] font-semibold uppercase tracking-[0.35em]"
                 style={{ color: "#4A7AB5" }}
               >
-                05 · 09 · 2026 · Araguaína, TO
+                25 · 07 · 2026 · Araguaína, TO
               </p>
 
               <h2
