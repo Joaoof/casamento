@@ -450,7 +450,13 @@ function StoriesEntry({
 // ─────────────────────────────────────────
 // QR CODE DO CONVITE
 // ─────────────────────────────────────────
+// ─────────────────────────────────────────
+// QR CODE DO CONVITE
+// ─────────────────────────────────────────
 function CanvaInviteQR() {
+  const encoded = encodeURIComponent(CANVA_INVITE_URL)
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=${QR_SIZE}x${QR_SIZE}&data=${encoded}&ecc=M`
+
   return (
     <div className="mt-6 flex flex-col gap-3">
       <p
@@ -470,12 +476,12 @@ function CanvaInviteQR() {
           width: "fit-content",
         }}
       >
-        <QRCode
-          value={CANVA_INVITE_URL}
-          size={QR_SIZE}
-          fgColor="#1B2A41"
-          bgColor="#FFFFFF"
-          level="M"
+        <img
+          src={qrSrc}
+          alt="QR Code do convite"
+          width={QR_SIZE}
+          height={QR_SIZE}
+          style={{ display: "block" }}
         />
       </div>
 
@@ -488,7 +494,6 @@ function CanvaInviteQR() {
     </div>
   )
 }
-
 // ─────────────────────────────────────────
 // PAGE
 // ─────────────────────────────────────────
