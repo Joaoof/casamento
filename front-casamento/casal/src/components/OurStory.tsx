@@ -2,11 +2,11 @@
 import { Heart, MapPin, Calendar } from "lucide-react"
 import StickyReveal from "./Reveal"
 import { useNavigate } from "react-router-dom"
-import { useState, useRef, useEffect, useMemo } from 'react'
-import QRCode from 'react-qr-code'  
-import backgroundImg from '../../public/img3.jpeg'; // Caminho relativo real para a sua imagem
+import { useState, useRef, useEffect } from 'react'
+import QRCode from 'react-qr-code'
+import backgroundImg from '../../public/img3.jpeg'
 
-// URL do convite no Canva — troque pelo link do seu convite
+// URL do convite no Canva
 const CANVA_INVITE_URL = "https://www.canva.com/design/DAHHalA3BP4/_MjyWGdTLA_AdhHS__Z3ZA/view?utm_content=DAHHalA3BP4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h742083ca1f"
 const QR_SIZE = 180
 
@@ -92,7 +92,6 @@ function StoriesTimeline({
   const DURATION = 5000
   const TICK = 50
 
-  // Cria o áudio mas NÃO tenta tocar ainda — mobile bloqueia sem interação
   useEffect(() => {
     const audio = new Audio('/audio/fundo.mp3')
     audio.loop = true
@@ -108,14 +107,12 @@ function StoriesTimeline({
     if (audioRef.current) audioRef.current.muted = muted
   }, [muted])
 
-  // Inicia música no primeiro toque do usuário (resolve bloqueio de autoplay)
   const startAudio = () => {
     if (audioStarted.current || !audioRef.current) return
     audioStarted.current = true
     audioRef.current.play().catch(() => { })
   }
 
-  // Fecha e para a música
   const close = () => {
     if (audioRef.current) {
       audioRef.current.pause()
@@ -124,7 +121,6 @@ function StoriesTimeline({
     document.dispatchEvent(new CustomEvent('stories:close'))
   }
 
-  // Progresso automático
   useEffect(() => {
     if (paused) return
     const id = setInterval(() => {
@@ -141,7 +137,6 @@ function StoriesTimeline({
 
   useEffect(() => { setProgress(0) }, [current])
 
-  // touchmove passive:false — só bloqueia scroll se for swipe horizontal
   useEffect(() => {
     const el = cardRef.current
     if (!el) return
@@ -164,7 +159,7 @@ function StoriesTimeline({
   }
 
   const onTouchStart = (e: React.TouchEvent) => {
-    startAudio() // ← inicia música no primeiro toque
+    startAudio()
     touchStartX.current = e.touches[0].clientX
     touchStartY.current = e.touches[0].clientY
     isSwiping.current = false
@@ -302,7 +297,7 @@ function StoriesTimeline({
               </div>
               <div style={{ flex: 1 }}>
                 <p style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.2, margin: 0 }}>
-                  Luís &amp; Natiele
+                  Luís &amp; Vitória
                 </p>
                 <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 10, margin: 0 }}>{event.date}</p>
               </div>
@@ -377,7 +372,6 @@ function StoriesTimeline({
     </>
   )
 }
-
 
 // ─────────────────────────────────────────
 // ENTRY — grid 3 × N linhas
@@ -454,6 +448,48 @@ function StoriesEntry({
 }
 
 // ─────────────────────────────────────────
+// QR CODE DO CONVITE
+// ─────────────────────────────────────────
+function CanvaInviteQR() {
+  return (
+    <div className="mt-6 flex flex-col gap-3">
+      <p
+        className="text-[11px] font-medium uppercase tracking-widest"
+        style={{ color: "rgba(27,42,65,0.45)" }}
+      >
+        Visualize o convite
+      </p>
+
+      <div
+        style={{
+          display: "inline-flex",
+          padding: 10,
+          background: "white",
+          borderRadius: 12,
+          border: "1px solid rgba(74,122,181,0.2)",
+          width: "fit-content",
+        }}
+      >
+        <QRCode
+          value={CANVA_INVITE_URL}
+          size={QR_SIZE}
+          fgColor="#1B2A41"
+          bgColor="#FFFFFF"
+          level="M"
+        />
+      </div>
+
+      <p
+        className="text-[11px]"
+        style={{ color: "rgba(27,42,65,0.4)" }}
+      >
+        Aponte a câmera para ver o convite completo
+      </p>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────
 // PAGE
 // ─────────────────────────────────────────
 export default function OurStory() {
@@ -518,16 +554,14 @@ export default function OurStory() {
       <StickyReveal index={0}>
         <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden">
 
-          {/* IMAGEM COM MELHOR QUALIDADE */}
           <div
-  className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
-  style={{
-    backgroundImage: `url(${backgroundImg})`,
-    filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
-  }}
-/>
+            className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${backgroundImg})`,
+              filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
+            }}
+          />
 
-          {/* OVERLAY CORRETO (quente + leve) */}
           <div
             className="absolute inset-0"
             style={{
@@ -537,7 +571,6 @@ export default function OurStory() {
 
           <div className="relative z-10 flex flex-col items-center px-6 text-center">
 
-            {/* LINHA + ÍCONE */}
             <div className="mb-5 flex items-center gap-3 opacity-80">
               <div className="h-[1px] w-8 md:w-12" style={{ background: "#F5F5DC" }} />
               <Heart className="h-3.5 w-3.5 md:h-4 md:w-4"
@@ -546,7 +579,6 @@ export default function OurStory() {
               <div className="h-[1px] w-8 md:w-12" style={{ background: "#F5F5DC" }} />
             </div>
 
-            {/* SUBTÍTULO */}
             <p
               className="mb-3 text-[9px] font-medium uppercase tracking-[0.4em] md:text-[10px]"
               style={{ color: "#F5F5DC" }}
@@ -554,7 +586,6 @@ export default function OurStory() {
               A nossa história
             </p>
 
-            {/* NOME */}
             <h1
               className="mb-4 font-serif text-[2.8rem] font-bold leading-tight sm:text-4xl md:text-5xl"
               style={{
@@ -565,7 +596,6 @@ export default function OurStory() {
               Luís & Vitória
             </h1>
 
-            {/* DATA + LOCAL */}
             <div className="mt-3 flex flex-col items-center gap-2 sm:flex-row sm:gap-6">
 
               <span
@@ -575,7 +605,7 @@ export default function OurStory() {
                 <Calendar className="h-3 w-3 md:h-3.5 md:w-3.5"
                   style={{ color: "#D8B56A" }}
                 />
-              05 de Setembro, 2026
+                05 de Setembro, 2026
               </span>
 
               <span className="hidden sm:block" style={{ color: "rgba(245,245,220,0.4)" }}>·</span>
@@ -625,7 +655,6 @@ export default function OurStory() {
         >
           <div className="flex max-w-xl flex-col items-center text-center">
 
-            {/* ASPAS DECORATIVA */}
             <span
               className="mb-2 select-none font-serif text-6xl leading-none md:text-7xl"
               style={{ color: "rgba(139,69,19,0.2)" }}
@@ -633,7 +662,6 @@ export default function OurStory() {
               "
             </span>
 
-            {/* TEXTO */}
             <p
               className="font-serif text-lg leading-[1.9] md:text-2xl"
               style={{ color: "#5a3b1a" }}
@@ -642,19 +670,15 @@ export default function OurStory() {
               Cada pequena escolha nos guiou até o altar.
             </p>
 
-            {/* LINHA + ÍCONE */}
             <div className="mt-8 flex items-center gap-4">
               <div className="h-[1px] w-8 md:w-10" style={{ background: "#D8B56A" }} />
-
               <Heart
                 className="h-3.5 w-3.5"
                 style={{ fill: "#D8B56A", color: "#D8B56A" }}
               />
-
               <div className="h-[1px] w-8 md:w-10" style={{ background: "#D8B56A" }} />
             </div>
 
-            {/* NOME DO CASAL */}
             <p
               className="mt-3 text-[10px] font-medium uppercase tracking-[0.3em]"
               style={{ color: "#8B4513" }}
@@ -746,6 +770,6 @@ export default function OurStory() {
         </section>
       </StickyReveal>
 
-    </div >
+    </div>
   )
 }
