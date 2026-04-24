@@ -6,7 +6,7 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import backgroundImg from '../../public/img3.jpeg'; // Caminho relativo real para a sua imagem
 
 // URL do convite no Canva — troque pelo link do seu convite
-const CANVA_INVITE_URL = "https://www.canva.com/design/DAHHalA3BP4/_MjyWGdTLA_AdhHS__Z3ZA/view?utm_content=DAHHalA3BP4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h742083ca1f"
+const CANVA_INVITE_URL = "https://www.canva.com/design/DAHHalA3BP4/_MjyWGdTLA_AdhHS__Z3ZA/view?utm_content=DAHHalA3BP4&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h742083[...]
 const QR_SIZE = 180
 
 // ─────────────────────────────────────────
@@ -571,12 +571,12 @@ export default function OurStory() {
 
           {/* IMAGEM COM MELHOR QUALIDADE */}
           <div
-  className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
-  style={{
-    backgroundImage: `url(${backgroundImg})`,
-    filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
-  }}
-/>
+            className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${backgroundImg})`,
+              filter: "brightness(0.9) contrast(1.05) saturate(1.05)",
+            }}
+          />
 
           {/* OVERLAY CORRETO (quente + leve) */}
           <div
@@ -626,7 +626,7 @@ export default function OurStory() {
                 <Calendar className="h-3 w-3 md:h-3.5 md:w-3.5"
                   style={{ color: "#D8B56A" }}
                 />
-              05 de Setembro, 2026
+                05 de Setembro, 2026
               </span>
 
               <span className="hidden sm:block" style={{ color: "rgba(245,245,220,0.4)" }}>·</span>
@@ -748,7 +748,7 @@ export default function OurStory() {
                 className="mb-4 text-[10px] font-semibold uppercase tracking-[0.35em]"
                 style={{ color: "#4A7AB5" }}
               >
-                25 · 07 · 2026 · Araguaína, TO
+                05/09/2026 · Araguaína, TO
               </p>
 
               <h2
