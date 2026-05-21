@@ -13,7 +13,7 @@ const COUPLES: Record<string, CoupleConfig> = {
     slug: DEFAULT_COUPLE_SLUG,
     names: 'Luís & Vitoria',
     weddingDateLabel: '05 de Setembro de 2026',
-    weddingDateISO: '2026-07-25T18:00:00',
+    weddingDateISO: '2026-09-05T16:30:00-03:00',
     cityLabel: 'Araguaína, TO',
   },
 };
